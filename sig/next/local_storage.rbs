@@ -1,0 +1,14 @@
+module Next
+  module LocalStorage
+    CURRENT_IDENTITY: Symbol
+    SENDER: Symbol
+
+    def self?.current_identity: -> Reference
+
+    def self?.sender: -> Reference
+
+    def self?.sender=: (Reference) -> Reference
+
+    def self?.with_current_identity: (Reference) { () -> void }-> void
+  end
+end

@@ -1,0 +1,23 @@
+module Next
+  class Core[ActorClass < Actor] < ::Concurrent::Synchronization::LockableObject
+    include Context
+
+    attr_reader serialized_execution: SerializedPriorityExecution
+    attr_reader actor: ActorClass
+    attr_reader props: Props[ActorClass]
+
+    def initialize: ({props: Props[ActorClass], identity: Reference}) -> void
+
+    def process_envelope: (Envelope)-> void
+
+    def run: -> void
+
+    def schedule_execution: (Envelope) { (Envelope) -> void } -> void
+
+    private
+
+    def auto_receive_message: (untyped)-> void
+
+    def current_behaviour: -> Symbol
+  end
+end

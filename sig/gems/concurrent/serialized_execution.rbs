@@ -1,0 +1,5 @@
+module Concurrent
+  class SerializedExecution
+    def synchronize: [T] () { () -> T } -> T
+  end
+end

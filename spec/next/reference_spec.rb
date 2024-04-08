@@ -1,0 +1,97 @@
+# frozen_string_literal: true
+
+require "concurrent"
+require "fear/await"
+
+RSpec.describe Next::Reference do
+  let(:klass) do
+    Class.new(Next::Actor) do
+      def initialize(starts_at: 0)
+        @counter = starts_at
+      end
+    end
+  end
+
+  context "with props" do
+    subject(:ref) { described_class.new(props, name: "test") }
+
+    context "with arguments" do
+      let(:props) { Next.props(klass, starts_at: 4) }
+
+      it { is_expected.to be_kind_of(Next::Reference) }
+      it { is_expected.to have_attributes(name: "test") }
+    end
+
+    context "without arguments" do
+      let(:props) { Next.props(klass) }
+
+      it { is_expected.to be_kind_of(Next::Reference) }
+      it { is_expected.to have_attributes(name: be_kind_of(String)) }
+    end
+  end
+
+  context "with actor class", pending: "not yet implemented" do
+    subject(:ref) { described_class.new(klass, name: "test") }
+
+    it { is_expected.to be_kind_of(Next::Reference) }
+    it { is_expected.to have_attributes(name: "test") }
+  end
+
+  describe "#tell" do
+    let(:timout) { 3 }
+
+    context "when actor respond within timeout" do
+      subject { Fear::Await.result(future, 3) }
+
+      let(:future) { Fear::Future.new(promise) }
+      let(:promise) { Fear::Promise.new }
+      let(:actor_class) do
+        Class.new(Next::Actor) do
+          def initialize(promise:)
+            @promise = promise
+          end
+
+          def receive(message)
+            @promise.success("received: #{message}")
+          end
+
+          def executor
+            Concurrent::ImmediateExecutor.new
+          end
+        end
+      end
+
+      let(:actor) { Next::Reference.new(Next.props(actor_class, promise:)) }
+
+      before do
+        actor << "foo"
+      end
+
+      it "returns response from the actor" do
+        is_expected.to eq(Fear.success("received: foo"))
+      end
+    end
+  end
+
+  describe "#ask" do
+    let(:timout) { 3 }
+
+    context "when actor respond within timeout" do
+      subject { Fear::Await.result(actor.ask("foo"), 3) }
+
+      let(:actor_class) do
+        Class.new(Next::Actor) do
+          def receive(message)
+            sender << "received: #{message}"
+          end
+        end
+      end
+
+      let(:actor) { Next::Reference.new(Next.props(actor_class), name: "test") }
+
+      it "returns response from the actor" do
+        is_expected.to eq(Fear.success("received: foo"))
+      end
+    end
+  end
+end

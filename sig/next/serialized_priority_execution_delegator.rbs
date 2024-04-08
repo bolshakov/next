@@ -1,0 +1,10 @@
+module Next
+  class SerializedPriorityExecutionDelegator < SimpleDelegator
+    @executor: Concurrent::AbstractExecutorService
+
+    @serializer: SerializedPriorityExecution
+
+    def post: (Array[untyped]) { () -> void } -> void
+    def running?: -> bool
+  end
+end

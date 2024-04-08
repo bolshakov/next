@@ -1,0 +1,7 @@
+module Next
+  PoisonPill: untyped
+
+  def self?.props: [T < Actor] (untyped, **untyped) -> Props[T]
+
+  def self?.default_executor: -> Concurrent::AbstractExecutorService
+end

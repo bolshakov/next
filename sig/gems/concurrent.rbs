@@ -1,0 +1,3 @@
+module Concurrent
+  def self?.global_io_executor: -> AbstractExecutorService
+end

@@ -1,0 +1,7 @@
+module Next
+  class NonConcurrentPriorityQueue[Elem]
+    type order = :min | :max
+    def initialize: (?order: order) -> instance
+    def push: (*Elem?) -> self
+  end
+end

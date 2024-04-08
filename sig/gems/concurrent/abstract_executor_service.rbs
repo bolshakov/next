@@ -1,0 +1,4 @@
+module Concurrent
+  class AbstractExecutorService
+  end
+end

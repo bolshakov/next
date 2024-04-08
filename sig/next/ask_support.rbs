@@ -1,0 +1,18 @@
+module Next
+  class AskSupport < Actor
+    class Ask
+      attr_reader destination: Reference
+      attr_reader message: untyped
+
+      def initialize: (Reference destination, untyped message) -> void
+                    | (destination: Reference, message: untyped) -> void
+    end
+
+    def self.props: (Fear::Promise) -> Props[AskSupport]
+
+    attr_reader promise: Fear::Promise
+
+    def initialize: (promise: Fear::Promise) -> void
+    def receive: (untyped) -> void
+  end
+end

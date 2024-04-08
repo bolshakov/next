@@ -1,0 +1,7 @@
+module Concurrent
+  module Synchronization
+    class LockableObject
+      def synchronize: [T] () { () -> T }-> T
+    end
+  end
+end

@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+module Next
+  class Props[T < Actor]
+    attr_reader actor_class: singleton(Actor)
+    attr_reader attributes: Hash[Symbol, untyped]
+
+    def __new_actor__: (Context) -> T
+    def initialize: (singleton(Actor), **untyped) -> void
+  end
+end

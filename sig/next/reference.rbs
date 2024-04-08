@@ -1,0 +1,19 @@
+module Next
+  class Reference
+    def initialize: [T < Actor] (Props[T], ?name: String) -> self
+
+    attr_reader core: Core[Actor]
+    attr_reader name: String
+    attr_reader props: Props[Actor]
+
+    alias << tell
+
+    def ask: (untyped, ?Reference)-> Fear::Future
+
+    def tell: (untyped, ?Reference) -> self
+
+    private
+
+    def start_actor: -> Core[Actor]
+  end
+end

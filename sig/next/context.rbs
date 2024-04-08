@@ -1,0 +1,7 @@
+module Next
+  module Context
+    def sender: -> Reference
+    def executor: -> Concurrent::AbstractExecutorService
+    def identity: -> Reference
+  end
+end

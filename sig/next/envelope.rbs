@@ -1,0 +1,15 @@
+module Next
+  class Envelope
+    def self.current_time: -> Numeric
+
+    attr_reader message: untyped
+    attr_reader posted_at: Numeric
+    attr_reader sender: Reference
+
+    def initialize: (message: untyped, sender: Reference, ?posted_at: Numeric) -> void
+
+    def deconstruct: -> [untyped, Reference]
+
+    def deconstruct_keys: (Array[Symbol] | nil) -> Hash[Symbol, untyped]
+  end
+end

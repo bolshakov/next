@@ -1,0 +1,8 @@
+module Next
+  interface _SystemMessage
+  end
+
+  module SystemMessage
+    include _SystemMessage
+  end
+end

@@ -1,0 +1,9 @@
+module Next
+  class Actor
+    attr_reader context: Context
+
+    def executor: -> Concurrent::AbstractExecutorService
+
+    def sender: -> Reference
+  end
+end
