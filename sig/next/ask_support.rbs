@@ -8,11 +8,11 @@ module Next
                     | (destination: Reference, message: untyped) -> void
     end
 
-    def self.props: (Fear::Promise) -> Props[AskSupport]
+    def self.props: (Fear::Promise[untyped]) -> Props[AskSupport]
 
-    attr_reader promise: Fear::Promise
+    attr_reader promise: Fear::Promise[untyped]
 
-    def initialize: (promise: Fear::Promise) -> void
+    def initialize: (promise: Fear::Promise[untyped]) -> void
     def receive: (untyped) -> void
   end
 end

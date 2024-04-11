@@ -1,0 +1,14 @@
+module Next
+  class SerializedExecutionDelegator < SimpleDelegator
+    @executor: Concurrent::AbstractExecutorService
+    @serializer: SerializedExecution
+
+    def post: (Envelope) { (Envelope) -> void } -> void
+
+    def resume!: -> self
+
+    def running?: -> bool
+
+    def suspend!: -> self
+  end
+end

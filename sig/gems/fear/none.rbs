@@ -1,0 +1,5 @@
+module Fear
+  class NoneClass
+    include Option[nil]
+  end
+end

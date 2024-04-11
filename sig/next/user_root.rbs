@@ -1,0 +1,11 @@
+module Next
+  class UserRoot < Actor
+    class CreateActor < Data
+      attr_reader props: Props[Actor]
+      attr_reader name: String
+      attr_reader promise: Fear::Promise[Reference]
+
+      def self.new: [T < Actor] (props: Props[T], name: String, promise: Fear::Promise[Reference]) -> instance
+    end
+  end
+end

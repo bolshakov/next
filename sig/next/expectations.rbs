@@ -1,0 +1,15 @@
+module Next
+  module Testing
+    module Expectations
+      attr_reader jailbreak: Concurrent::Channel
+
+      def expect_message: (Envelope, ?timeout: Numeric) { -> void }-> untyped
+
+      private
+
+      def expect_match: (untyped, Envelope, String?)-> void
+
+      def receive_one: (timeout: Numeric) -> Fear::Option[untyped]
+    end
+  end
+end

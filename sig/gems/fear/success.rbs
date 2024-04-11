@@ -1,0 +1,5 @@
+module Fear
+  class Success[Elem]
+    include Try[Elem]
+  end
+end

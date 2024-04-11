@@ -1,0 +1,5 @@
+module Next
+  module SystemMessages
+    Terminate: _SystemMessage
+  end
+end

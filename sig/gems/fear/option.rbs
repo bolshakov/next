@@ -1,0 +1,7 @@
+module Fear
+  module Option[Elem]
+    def each: [T] { (T) -> void } -> void
+    def get_or_else: [T] { -> T } -> (Elem | T)
+    def present?: -> bool
+  end
+end

@@ -1,7 +1,9 @@
 module Next
-  PoisonPill: untyped
+  PoisonPill: AutoReceivedMessage
+
+  VERSION: String
 
   def self?.props: [T < Actor] (untyped, **untyped) -> Props[T]
-
   def self?.default_executor: -> Concurrent::AbstractExecutorService
+  def self?.system: (String) -> System
 end

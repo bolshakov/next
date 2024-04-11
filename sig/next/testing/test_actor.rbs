@@ -1,0 +1,12 @@
+module Next
+  module Testing
+    class TestActor < Actor
+      def self.jailbreak: -> Concurrent::Channel
+      def self.props: (jailbreak: Concurrent::Channel) -> Props[TestActor]
+
+      attr_reader jailbreak: Concurrent::Channel
+
+      def initialize: (jailbreak: Concurrent::Channel) -> void
+    end
+  end
+end

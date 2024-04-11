@@ -1,0 +1,7 @@
+module Next
+  class SingletonObject
+    attr_reader name: String
+
+    def initialize: (String | Symbol) -> void
+  end
+end

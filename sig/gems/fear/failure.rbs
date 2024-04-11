@@ -1,0 +1,5 @@
+module Fear
+  class Failure[Error < StandardError]
+    include Try[Error]
+  end
+end

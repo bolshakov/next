@@ -1,0 +1,15 @@
+module Next
+  module SystemMessages
+    class Initialize
+      include SystemMessage
+
+      attr_reader parent: Reference
+
+      def initialize: (Reference) -> void
+
+      def deconstruct: -> [Reference]
+
+      def deconstruct_key: -> {parent: Reference}
+    end
+  end
+end

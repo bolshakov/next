@@ -9,7 +9,12 @@ target :lib do
   #   # ignore "lib/templates/*.rb"
   #
   library "delegate"              # Standard libraries
-  #   library "strong_json"           # Gems
+  library "securerandom"          # Standard libraries
+  library "timeout"
+
+  ignore "lib/next/testing/rspec.rb"
+  ignore "lib/next/testing/expectations.rb"
+  # library "strong_json"           # Gems
   #
   #   # configure_code_diagnostics(D::Ruby.default)      # `default` diagnostics setting (applies by default)
   #   # configure_code_diagnostics(D::Ruby.strict)       # `strict` diagnostics setting

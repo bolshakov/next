@@ -6,14 +6,24 @@ module Next
   #
   # @see [SimpleDelegator](http://www.ruby-doc.org/stdlib-2.1.2/libdoc/delegate/rdoc/SimpleDelegator.html)
   # @see Concurrent::SerializedExecutionDelegator
-  # @see Next::SerializedPriorityExecution
-  class SerializedPriorityExecutionDelegator < SimpleDelegator
+  # @see Next::SerializedExecution
+  class SerializedExecutionDelegator < SimpleDelegator
     include ::Concurrent::SerialExecutorService
 
     def initialize(executor)
       @executor = executor
-      @serializer = SerializedPriorityExecution.new
+      @serializer = SerializedExecution.new
       super(executor)
+    end
+
+    def suspend!
+      @serializer.suspend!
+      self
+    end
+
+    def resume!
+      @serializer.resume!
+      self
     end
 
     def post(*, &task)

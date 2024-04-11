@@ -2,8 +2,8 @@ module Next
   class Core[ActorClass < Actor] < ::Concurrent::Synchronization::LockableObject
     include Context
 
-    attr_reader serialized_execution: SerializedPriorityExecution
-    attr_reader actor: ActorClass
+    attr_reader serialized_execution: SerializedExecution
+    attr_reader actor: ActorClass?
     attr_reader props: Props[ActorClass]
 
     def initialize: ({props: Props[ActorClass], identity: Reference}) -> void
@@ -19,5 +19,17 @@ module Next
     def auto_receive_message: (untyped)-> void
 
     def current_behaviour: -> Symbol
+
+    def finish_terminate: -> void
+
+    def handle_terminate: -> void
+
+    def initialize_actor: (Reference)-> void
+
+    def process_message: (untyped) -> void
+
+    def process_system_message: (untyped) -> void
+
+    def supervise: (Reference) -> void
   end
 end

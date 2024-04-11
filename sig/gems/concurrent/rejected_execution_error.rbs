@@ -1,0 +1,4 @@
+module Concurrent
+  class RejectedExecutionError < Error
+  end
+end

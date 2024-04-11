@@ -1,0 +1,4 @@
+module Concurrent
+  class Error
+  end
+end

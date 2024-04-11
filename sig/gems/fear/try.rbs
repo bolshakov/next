@@ -1,0 +1,4 @@
+module Fear
+  module Try[Elem]
+  end
+end

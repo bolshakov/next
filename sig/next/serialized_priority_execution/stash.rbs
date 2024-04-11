@@ -1,0 +1,25 @@
+module Next
+  class SerializedExecution
+    class Stash
+      attr_accessor suspended: bool
+      attr_reader system_jobs: Array[Job]
+      attr_reader user_jobs: Array[Job]
+
+      def initialize: (?suspended: bool)-> void
+
+      def empty?: -> bool
+
+      def push: (*Job) -> self
+
+      def resume!: -> self
+
+      def shift: -> Fear::Option[Job]
+
+      def suspend!: -> self
+
+      def suspended?: -> bool
+
+      def to_a: -> Array[Job]
+    end
+  end
+end

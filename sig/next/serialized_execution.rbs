@@ -1,0 +1,32 @@
+module Next
+  class SerializedExecution < ::Concurrent::Synchronization::LockableObject
+    include Concurrent::Concern::Logging
+
+    type job = [Concurrent::AbstractExecutorService, Envelope, Proc]
+    attr_accessor being_executed: bool
+    attr_reader stash: Stash
+
+    def initialize: -> void
+
+    alias being_executed? being_executed
+
+    def post: (Concurrent::AbstractExecutorService, Envelope) { (Envelope) -> void } -> void
+    def posts: (Array[job]) -> bool?
+
+    def resume!: -> self
+    def suspend!: -> self
+
+    def suspended?: -> bool
+
+    private
+
+    def new_job: (Array[Envelope], Concurrent::AbstractExecutorService, Proc) -> Job
+
+    def ns_initialize: -> void
+    def call_job: (Job) -> void
+
+    def take_and_call_job: { -> void } -> void
+
+    def work: (Job)-> void
+  end
+end

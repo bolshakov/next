@@ -1,0 +1,5 @@
+module Fear
+  module Await
+    def self?.result: [T] (Future[T], Numeric) -> T
+  end
+end

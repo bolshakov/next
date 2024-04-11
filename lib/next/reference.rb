@@ -43,21 +43,27 @@ module Next
 
     # Sends a message and returns response
     #
-    # @param message [any]
-    # @param sender [Fear::Actor::Reference] who's sending the message. By default it's current actor
+    # @param message
+    # @param sender  who's sending the message. By default it's current actor
     # @return [Fear::Future]
     def ask(message, sender = LocalStorage.current_identity)
       promise = Fear::Promise.new
 
-      props = AskSupport.props(promise)
+      ask_support =
+        Reference
+          .new(AskSupport.props(promise))
+          .tell(AskSupport::Ask.new(self, message))
 
-      ask = Reference
-        .new(props)
-        .tell(AskSupport::Ask.new(self, message))
+      # This actor is supervising AskSupport
+      self << SystemMessages::Supervise.new(ask_support)
 
-      Fear::Future
-        .new(promise)
-        .on_complete { ask.tell(PoisonPill) }
+      promise.to_future
+    end
+
+    def ask!(message, sender = LocalStorage.current_identity, timeout: 3)
+      ask(message, sender)
+        .then { Fear::Await.result(_1, timeout) }
+        .get
     end
 
     # @param other [Object]

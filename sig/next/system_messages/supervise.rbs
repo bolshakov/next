@@ -1,0 +1,15 @@
+module Next
+  module SystemMessages
+    class Supervise
+      include SystemMessage
+
+      attr_reader child: Reference
+
+      def initialize: (Reference) -> void
+
+      def deconstruct: -> [Reference]
+
+      def deconstruct_key: -> { child: Reference }
+    end
+  end
+end

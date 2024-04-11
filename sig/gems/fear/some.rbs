@@ -1,0 +1,5 @@
+module Fear
+  class Some[Elem]
+    include Option[Elem]
+  end
+end

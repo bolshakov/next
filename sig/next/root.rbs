@@ -1,0 +1,4 @@
+module Next
+  class Root < Actor
+  end
+end

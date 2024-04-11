@@ -28,6 +28,10 @@ module Next
       freeze
     end
 
+    def executor
+      actor_class.executor
+    end
+
     # Instantiates actor from props
     # @api private
     def __new_actor__(context)

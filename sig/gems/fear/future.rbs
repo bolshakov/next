@@ -1,9 +1,7 @@
 module Fear
-  class Future
-    def initialize: (?Promise?) -> self
-    def on_complete: () { () -> void } -> self
-  end
-
-  class Promise
+  class Future[T]
+    def initialize: () -> void
+                  | (Promise[T]) -> void
+    def on_complete: { (Try[T]) -> void } -> self
   end
 end

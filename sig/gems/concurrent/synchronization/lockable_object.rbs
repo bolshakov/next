@@ -1,7 +1,11 @@
 module Concurrent
   module Synchronization
-    class LockableObject
+    interface _LockableObject
       def synchronize: [T] () { () -> T }-> T
+    end
+
+    class LockableObject
+      include _LockableObject
     end
   end
 end

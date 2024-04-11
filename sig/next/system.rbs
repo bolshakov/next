@@ -1,0 +1,20 @@
+module Next
+  class System
+    ROOT_PROPS: Props[Root]
+    USER_ROOT_PROPS: Props[UserRoot]
+
+    attr_reader name: String
+    attr_reader root: Reference
+    attr_reader user_root: Reference
+
+    def initialize: (String) -> void
+
+    def actor_of: [T < Actor] (Props[T], ?String) -> Reference
+
+    private
+
+    def start_actor_system: -> void
+    def start_root: -> void
+    def start_user_root: -> void
+  end
+end

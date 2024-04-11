@@ -1,4 +1,5 @@
 module Concurrent
   class AbstractExecutorService
+    def post: { -> void } -> void
   end
 end

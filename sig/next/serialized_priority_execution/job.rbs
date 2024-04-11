@@ -1,11 +1,12 @@
 module Next
-  class SerializedPriorityExecution
-    class Job
+  class SerializedExecution
+    class Job < Data
       attr_reader executor: Concurrent::AbstractExecutorService
-      attr_reader args: Array[Envelope]
+      attr_reader envelope: Envelope
       attr_reader block: Proc
 
-      def initialize: (Concurrent::AbstractExecutorService, Array[Envelope], Proc) -> void
+      def self.new: (executor: Concurrent::AbstractExecutorService, envelope: Envelope, block: Proc) -> instance
+                  | (Concurrent::AbstractExecutorService, Envelope, Proc) -> instance
 
       def call: -> void
     end

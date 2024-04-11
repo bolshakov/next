@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 require "next"
+require "fear/await"
+require "fear/rspec"
+require "next/testing/rspec"
+require "support/echo_actor"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

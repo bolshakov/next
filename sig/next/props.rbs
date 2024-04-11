@@ -7,5 +7,7 @@ module Next
 
     def __new_actor__: (Context) -> T
     def initialize: (singleton(Actor), **untyped) -> void
+
+    def executor: -> Concurrent::AbstractExecutorService
   end
 end

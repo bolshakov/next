@@ -2,6 +2,7 @@
 
 require "zeitwerk"
 require "concurrent"
+require "fear"
 
 loader = Zeitwerk::Loader.for_gem
 loader.setup
@@ -17,9 +18,7 @@ module Next
     end
   end
 
-  module AutoReceivedMessage
-  end
+  def self.system(name) = System.new(name)
 
-  PoisonPill = Object.new.extend(AutoReceivedMessage)
-  Terminate = Object.new.extend(SystemMessage)
+  PoisonPill = AutoReceivedMessage.new("PoisonPill")
 end

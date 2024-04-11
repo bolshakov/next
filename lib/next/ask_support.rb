@@ -24,6 +24,7 @@ module Next
         destination.tell(question)
       else
         promise.success(message)
+        context.identity << PoisonPill
       end
     end
   end

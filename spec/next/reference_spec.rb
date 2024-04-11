@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "concurrent"
-require "fear/await"
-
 RSpec.describe Next::Reference do
   let(:klass) do
     Class.new(Next::Actor) do
@@ -37,7 +34,7 @@ RSpec.describe Next::Reference do
     it { is_expected.to have_attributes(name: "test") }
   end
 
-  describe "#tell" do
+  describe "#tell", :actor_system do
     let(:timout) { 3 }
 
     context "when actor respond within timeout" do
@@ -61,7 +58,7 @@ RSpec.describe Next::Reference do
         end
       end
 
-      let(:actor) { Next::Reference.new(Next.props(actor_class, promise:)) }
+      let(:actor) { system.actor_of(Next.props(actor_class, promise:)) }
 
       before do
         actor << "foo"
@@ -73,25 +70,27 @@ RSpec.describe Next::Reference do
     end
   end
 
-  describe "#ask" do
+  describe "#ask", :actor_system do
     let(:timout) { 3 }
 
     context "when actor respond within timeout" do
       subject { Fear::Await.result(actor.ask("foo"), 3) }
 
-      let(:actor_class) do
-        Class.new(Next::Actor) do
-          def receive(message)
-            sender << "received: #{message}"
-          end
-        end
-      end
-
-      let(:actor) { Next::Reference.new(Next.props(actor_class), name: "test") }
+      let(:actor) { system.actor_of(EchoActor.props) }
 
       it "returns response from the actor" do
-        is_expected.to eq(Fear.success("received: foo"))
+        is_expected.to be_success_of("foo")
       end
+    end
+  end
+
+  describe "#ask!", :actor_system do
+    subject { actor.ask!("foo") }
+
+    let(:actor) { system.actor_of(EchoActor.props) }
+
+    it "returns response from the actor" do
+      is_expected.to eq("foo")
     end
   end
 end

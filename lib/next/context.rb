@@ -4,17 +4,42 @@ module Next
   # Actor Context is an actor's interface from the actor's point of view.
   # Every actor can access it by calling +#context+
   #
+  # Warning: Context should never be shared outside of the actor
+  #
   # @api public
   module Context
     # Refers to actor's own +Reference+
-    #
-    # @!attribute identity
-    #   @return [Next::Reference]
     attr_accessor :identity
     private :identity=
 
-    def executor
-      Next.default_executor
+    attr_reader :children
+    private :children
+
+    attr_accessor :parent
+    private :parent=
+
+    def initialize
+      super()
+
+      synchronize do
+        @children = {}
+      end
+    end
+
+    # Spawn a new child actor and supervise it
+    #
+    #   @param props [Fear::Actor::Props]
+    #   @param name [String]
+    #   @return [Fear::Actor::Reference]
+    #
+    def actor_of(props, name = SecureRandom.uuid)
+      if children.has_key?(name.to_s)
+        raise ActorNameError, "name #{name.inspect} is already used by another actor"
+      else
+        Reference.new(props, name:).tap do |child|
+          identity << SystemMessages::Supervise.new(child)
+        end
+      end
     end
 
     def sender

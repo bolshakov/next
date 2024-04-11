@@ -1,0 +1,4 @@
+module Next
+  class ActorNameError < Error
+  end
+end

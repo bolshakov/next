@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+module Fear
+  module Utils
+    UNDEFINED: singleton(Object)
+  end
+end

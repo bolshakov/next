@@ -24,12 +24,17 @@ GEM
     base64 (0.2.0)
     bigdecimal (3.1.7)
     concurrent-ruby (1.2.3)
+    concurrent-ruby-edge (0.7.0)
+      concurrent-ruby (~> 1.2.0)
     connection_pool (2.4.1)
     csv (3.3.0)
     diff-lcs (1.5.1)
     drb (2.2.1)
     fear (3.0.0)
       zeitwerk
+    fear-rspec (0.3.0)
+      fear (>= 1.0.0)
+      rspec (~> 3.0)
     ffi (1.16.3)
     fileutils (1.7.2)
     i18n (1.14.4)
@@ -129,7 +134,8 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  fear
+  concurrent-ruby-edge
+  fear-rspec
   next!
   rake (~> 13.0)
   rspec (~> 3.0)

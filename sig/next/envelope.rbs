@@ -1,15 +1,11 @@
 module Next
-  class Envelope
-    def self.current_time: -> Numeric
-
+  class Envelope < Data
     attr_reader message: untyped
-    attr_reader posted_at: Numeric
     attr_reader sender: Reference
 
-    def initialize: (message: untyped, sender: Reference, ?posted_at: Numeric) -> void
+    def self.new: (message: untyped, sender: Reference) -> instance
+                | (untyped, Reference) -> instance
 
-    def deconstruct: -> [untyped, Reference]
-
-    def deconstruct_keys: (Array[Symbol] | nil) -> Hash[Symbol, untyped]
+    def system_message?: -> bool
   end
 end

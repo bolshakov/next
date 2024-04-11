@@ -6,12 +6,21 @@ module Next
     # Entry point to actor's API
     attr_reader :context
 
-    def executor
-      context.executor
+    class << self
+      def executor
+        Next.default_executor
+      end
     end
 
     def sender
       context.sender
+    end
+
+    # @api private
+    def around_post_stop = post_stop
+
+    # User-overridable callback executed after stopping an actor
+    def post_stop
     end
   end
 end

@@ -8,7 +8,7 @@ module Next
 
     alias << tell
 
-    def ask: (untyped, ?Reference)-> Fear::Future
+    def ask: [T] (untyped, ?Reference)-> Fear::Future[T]
 
     def tell: (untyped, ?Reference) -> self
 

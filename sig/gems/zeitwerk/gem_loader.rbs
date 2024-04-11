@@ -1,0 +1,5 @@
+module Zeitwerk
+  class GemLoader
+    def setup: -> void
+  end
+end

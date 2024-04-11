@@ -1,0 +1,4 @@
+module Concurrent
+  module SerialExecutorService
+  end
+end

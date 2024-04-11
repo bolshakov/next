@@ -1,0 +1,5 @@
+module Fear
+  class Promise[T]
+    def to_future: -> Future[T]
+  end
+end

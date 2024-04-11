@@ -1,9 +1,14 @@
 module Next
   class Actor
+    def self.executor: -> Concurrent::AbstractExecutorService
+
     attr_reader context: Context
 
-    def executor: -> Concurrent::AbstractExecutorService
+    def around_post_stop: -> void
+
+    def post_stop: -> void
 
     def sender: -> Reference
+    def receive: (untyped) -> void
   end
 end

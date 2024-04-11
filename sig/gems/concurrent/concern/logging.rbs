@@ -1,0 +1,9 @@
+module Concurrent
+  module Concern
+    module Logging
+      DEBUG: 0
+
+      def log: (Integer, StandardError) -> void
+    end
+  end
+end
