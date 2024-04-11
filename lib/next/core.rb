@@ -91,7 +91,7 @@ module Next
     end
 
     private def supervise(child)
-      children[child.name] = child
+      add_child(child)
       child << SystemMessages::Initialize.new(identity)
     end
 

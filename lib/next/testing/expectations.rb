@@ -22,6 +22,34 @@ module Next
         end
       end
 
+      # Wait for a message matching +expected+
+      #
+      def fish_for_message(expected = Fear::Utils::UNDEFINED, timeout: DEFAULT_TIMEOUT, &block)
+        stop = Time.now + timeout
+        received_messages = []
+
+        loop do
+          remaining_timeout = stop - Time.now
+          case receive_one(timeout: remaining_timeout)
+          in Fear::None
+            raise ::RSpec::Expectations::ExpectationNotMetError, <<~ERROR, caller(1)
+              timeout (#{timeout}) during fish_for_message while fishing for `#{expected.inspect}`.
+              Received messages:
+              #{received_messages.map { "  * #{_1}" }.join("\n")}
+            ERROR
+          in Fear::Some(received)
+            begin
+              expect_match(expected, received, &block)
+            rescue ::RSpec::Expectations::ExpectationNotMetError
+              received_messages << received.message
+              next
+            else
+              return received.message
+            end
+          end
+        end
+      end
+
       # Expects the given message to be received in a given timeout
       private def receive_one(timeout:)
         Timeout.timeout(timeout) do

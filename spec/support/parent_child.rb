@@ -18,7 +18,7 @@ class ParentActor < ActorWithInspector
     in [:get_child, name]
       inspector << context.child(name)
     in [:create_child, name]
-      inspector << context.actor_of(ChildActor.props(inspector), name)
+      inspector << context.actor_of(ChildActor.props(inspector:), name)
     in :get_children
       inspector << context.children.map(&:name)
     end

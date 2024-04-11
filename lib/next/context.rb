@@ -12,9 +12,6 @@ module Next
     attr_accessor :identity
     private :identity=
 
-    attr_reader :children
-    private :children
-
     attr_accessor :parent
     private :parent=
 
@@ -33,7 +30,7 @@ module Next
     #   @return [Fear::Actor::Reference]
     #
     def actor_of(props, name = SecureRandom.uuid)
-      if children.has_key?(name.to_s)
+      if @children.has_key?(name.to_s)
         raise ActorNameError, "name #{name.inspect} is already used by another actor"
       else
         Reference.new(props, name:).tap do |child|
@@ -44,6 +41,23 @@ module Next
 
     def sender
       LocalStorage.sender
+    end
+
+    # Gets child with the given name
+    def child(name)
+      Fear.option(@children[name.to_s])
+    end
+
+    # Gets children of this actor
+    def children
+      Set.new(@children.values)
+    end
+
+    # Unregister child
+    private def add_child(child)
+      synchronize do
+        @children[child.name] = child
+      end
     end
   end
 end

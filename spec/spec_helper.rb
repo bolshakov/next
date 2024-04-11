@@ -5,6 +5,8 @@ require "fear/await"
 require "fear/rspec"
 require "next/testing/rspec"
 require "support/echo_actor"
+require "support/actor_with_inspector"
+require "support/parent_child"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

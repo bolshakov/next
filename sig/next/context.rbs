@@ -1,15 +1,21 @@
 module Next
   module Context
     include Concurrent::Synchronization::_LockableObject
+    @children: Hash[String, Reference]
 
-    attr_reader children: Hash[String, Reference]
     attr_accessor identity: Reference
-
     attr_accessor parent: Reference
 
     def actor_of: [T < Actor] (Props[T], ?String)-> Reference
 
+    def child: (String | Symbol)-> Fear::Option[Reference]
+
     def sender: -> Reference
     def executor: -> Concurrent::AbstractExecutorService
+
+    private
+
+    def add_child: (Reference) -> void
+    def children: ->Set[Reference]
   end
 end

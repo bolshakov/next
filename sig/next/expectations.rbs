@@ -3,7 +3,9 @@ module Next
     module Expectations
       attr_reader jailbreak: Concurrent::Channel
 
-      def expect_message: (Envelope, ?timeout: Numeric) { -> void }-> untyped
+      def expect_message: (Envelope, ?timeout: Numeric) { -> void } -> untyped
+
+      def fish_for_message: (untyped, ?timeout: Numeric) { -> void } -> untyped
 
       private
 
