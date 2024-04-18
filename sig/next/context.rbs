@@ -1,21 +1,28 @@
 module Next
+  interface _ContextWithChildren
+    def child: (String | Symbol)-> Fear::_Option[Reference]
+    def children: ->Set[Reference]
+  end
+
   module Context
     include Concurrent::Synchronization::_LockableObject
+    include _ContextWithChildren
     @children: Hash[String, Reference]
 
     attr_accessor identity: Reference
     attr_accessor parent: Reference
 
     def actor_of: [T < Actor] (Props[T], ?String)-> Reference
-
-    def child: (String | Symbol)-> Fear::Option[Reference]
-
     def sender: -> Reference
-    def executor: -> Concurrent::AbstractExecutorService
+    def stop: (Reference) -> void
 
     private
 
     def add_child: (Reference) -> void
-    def children: ->Set[Reference]
+
+    def child_by_reference: (Reference) -> Fear::_Option[Reference]
+
+    def remove_child: (Reference) -> void
+
   end
 end

@@ -1,0 +1,15 @@
+module Next
+  module SystemMessages
+    class Failed
+      include SystemMessage
+
+      attr_reader cause: StandardError
+      attr_reader child: Reference
+
+      def initialize: (child: Reference, cause: StandardError) -> void
+      def deconstruct: -> [Reference, StandardError]
+
+      def deconstruct_key: -> { child: Reference, cause: StandardError }
+    end
+  end
+end

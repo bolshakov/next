@@ -1,0 +1,31 @@
+module Next
+  class SupervisionStrategy
+    type decider = ^(StandardError) -> Symbol?
+    DEFAULT_DECIDER: decider
+    DIRECTIVES: Array[Symbol]
+    ESCALATE: Symbol
+    RESTART: Symbol
+    RESUME: Symbol
+    STOP: Symbol
+
+    def self?.default_strategy: -> SupervisionStrategy
+
+    def self?.default_decider: -> decider
+
+    attr_reader decider: decider
+
+    def self.new: { (StandardError) -> Symbol? } -> instance
+
+    def handle_failure: [T < Actor] (cause: StandardError, child: Reference, context: Core[T]) -> bool
+
+    def process_failure: [T < Actor] (cause: StandardError, child: Reference, restart: bool, context: Core[T]) -> void
+
+    private
+
+    def decide: (StandardError) -> Symbol
+
+    def restart_child: (child: Reference, cause: StandardError, suspend_first: bool) -> void
+
+    def resume_child: (child: Reference, cause: StandardError) -> void
+  end
+end

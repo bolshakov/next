@@ -90,7 +90,7 @@ RSpec.describe Next::Reference do
     let(:actor) { system.actor_of(EchoActor.props) }
 
     it "returns response from the actor" do
-      is_expected.to eq("foo")
+      is_expected.to be_some_of("foo")
     end
   end
 end

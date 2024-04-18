@@ -7,15 +7,13 @@ module Next
   # @api private
   class Core < ::Concurrent::Synchronization::LockableObject
     include Context
+    include FaultTolerance
 
     attr_reader :serialized_execution
     private :serialized_execution
 
     attr_reader :props
     private :props
-
-    attr_reader :actor
-    private :actor
 
     def initialize(opts = {})
       super()
@@ -42,28 +40,38 @@ module Next
             else
               process_message(message)
             end
+          rescue => error
+            handle_processing_error(error)
           end
         end
+      rescue => error
+        puts ">> error: #{error}"
       end
     end
 
     private def process_system_message(message)
       case message
-      in SystemMessages::Supervise(child)
-        supervise(child)
+      in SystemMessages::DeathWatchNotification(child)
+        handle_death_watch_notification(child)
+      in SystemMessages::Failed(child, cause)
+        handle_failure(child, cause)
       in SystemMessages::Initialize(parent)
         initialize_actor(parent)
+      in SystemMessages::Recreate(cause)
+        handle_recreate(cause)
+      in SystemMessages::Resume(cause)
+        handle_resume(cause)
+      in SystemMessages::Supervise(child)
+        supervise(child)
+      in SystemMessages::Suspend
+        handle_suspend
       in SystemMessages::Terminate
         handle_terminate
       end
     end
 
     private def process_message(message)
-      raise "actor not initialized" if actor.nil?
       actor.public_send(current_behaviour, message)
-    rescue => e
-      puts e.inspect
-      puts e.backtrace
     end
 
     private def auto_receive_message(message)
@@ -90,6 +98,12 @@ module Next
       end
     end
 
+    private def handle_death_watch_notification(child)
+      child_by_reference(child).each do
+        remove_child(child)
+      end
+    end
+
     private def supervise(child)
       add_child(child)
       child << SystemMessages::Initialize.new(identity)
@@ -98,16 +112,21 @@ module Next
     private def initialize_actor(parent)
       self.parent = parent
       serialized_execution.resume!
-      @actor = props.__new_actor__(self)
+      self.actor = props.__new_actor__(self)
+    rescue
+      raise ActorInitializationError.new("exception during creation", identity)
     end
 
-    private def handle_terminate
-      # children.each { |child| stop(child) }
-      serialized_execution.suspend!
-      finish_terminate
+    private def actor
+      @actor || raise(ActorInitializationError.new("actor not initialized", identity))
     end
 
-    private def finish_terminate
+    private def actor_initialized?
+      !@actor.nil?
+    end
+
+    private def actor=(value)
+      @actor = value
     end
   end
 end

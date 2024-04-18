@@ -10,7 +10,6 @@ class ActorWithInspector < Next::Actor
   end
 
   def receive(message)
-    puts "mssag"
     inspector << message
   end
 end

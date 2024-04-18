@@ -1,0 +1,4 @@
+module Next
+  class AllForOneStrategy < SupervisionStrategy
+  end
+end

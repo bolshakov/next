@@ -13,7 +13,7 @@ module Next
 
       def resume!: -> self
 
-      def shift: -> Fear::Option[Job]
+      def shift: -> Fear::_Option[Job]
 
       def suspend!: -> self
 

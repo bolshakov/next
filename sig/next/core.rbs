@@ -1,9 +1,11 @@
 module Next
   class Core[ActorClass < Actor] < ::Concurrent::Synchronization::LockableObject
     include Context
+    include FaultTolerance
+
+    @actor: ActorClass?
 
     attr_reader serialized_execution: SerializedExecution
-    attr_reader actor: ActorClass?
     attr_reader props: Props[ActorClass]
 
     def initialize: ({props: Props[ActorClass], identity: Reference}) -> void
@@ -16,13 +18,17 @@ module Next
 
     private
 
+    def actor: -> ActorClass
+
+    def actor=: (ActorClass) -> ActorClass
+
+    def actor_initialized?: -> bool
+
     def auto_receive_message: (untyped)-> void
 
     def current_behaviour: -> Symbol
 
-    def finish_terminate: -> void
-
-    def handle_terminate: -> void
+    def handle_death_watch_notification: (Reference) -> void
 
     def initialize_actor: (Reference)-> void
 

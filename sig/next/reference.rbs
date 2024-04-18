@@ -8,7 +8,9 @@ module Next
 
     alias << tell
 
-    def ask: [T] (untyped, ?Reference)-> Fear::Future[T]
+    def ask: (untyped, ?Reference)-> Fear::Future[untyped]
+
+    def ask!: (untyped, ?Reference, ?timeout: Numeric) -> Fear::Option[untyped]
 
     def tell: (untyped, ?Reference) -> self
 

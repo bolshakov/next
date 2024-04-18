@@ -1,0 +1,7 @@
+module Next
+  module SystemMessages
+    class Suspend
+      include SystemMessage
+    end
+  end
+end

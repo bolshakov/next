@@ -1,0 +1,31 @@
+module Next
+  class Core[ActorClass < Actor] < Concurrent::Synchronization::LockableObject
+    module FaultTolerance
+      # @type module: Core.class
+      include Concurrent::Synchronization::_LockableObject
+      include _ContextWithChildren
+
+      def handle_resume: (StandardError) -> void
+
+      def handle_suspend: -> void
+
+      private
+
+      def create_on_failure: -> void
+
+      def finish_terminate: -> void
+
+      def handle_failure: (Reference, StandardError)-> void
+
+      def handle_processing_error: (StandardError) -> void
+
+      def handle_recreate: (StandardError)-> void
+
+      def handle_terminate: -> void
+
+      def resume_children: (StandardError) -> void
+
+      def suspend_children: -> void
+    end
+  end
+end

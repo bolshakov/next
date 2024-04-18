@@ -4,11 +4,23 @@ module Next
 
     attr_reader context: Context
 
+    def around_post_restart: (reason: StandardError) -> void
+
     def around_post_stop: -> void
+
+    def around_pre_restart: (reason: StandardError, message: Fear::Option[untyped]) -> void
+
+    def post_restart: (reason: StandardError) -> void
 
     def post_stop: -> void
 
+    def pre_restart: (reason: StandardError, message: Fear::Option[untyped]) -> void
+
+    def pre_start: -> void
+
     def sender: -> Reference
     def receive: (untyped) -> void
+
+    def supervision_strategy: -> SupervisionStrategy
   end
 end

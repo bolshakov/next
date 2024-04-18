@@ -1,0 +1,13 @@
+module Next
+  module SystemMessages
+    class DeathWatchNotification
+      attr_reader actor: Reference
+
+      def initialize: (Reference) -> void
+
+      def deconstruct: -> [Reference]
+
+      def deconstruct_key: -> { actor: Reference }
+    end
+  end
+end

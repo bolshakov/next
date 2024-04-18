@@ -1,0 +1,5 @@
+module Next
+  class ActorInitializationError < Error
+    def initialize: (String, Reference) -> void
+  end
+end

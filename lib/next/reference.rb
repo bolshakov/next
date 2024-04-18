@@ -63,7 +63,9 @@ module Next
     def ask!(message, sender = LocalStorage.current_identity, timeout: 3)
       ask(message, sender)
         .then { Fear::Await.result(_1, timeout) }
-        .get
+        .to_option
+    rescue Timeout::Error
+      Fear.none
     end
 
     # @param other [Object]

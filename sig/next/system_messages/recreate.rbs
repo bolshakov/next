@@ -1,0 +1,15 @@
+module Next
+  module SystemMessages
+    class Recreate
+      include SystemMessage
+
+      attr_reader cause: StandardError
+
+      def initialize: (StandardError) -> void
+
+      def deconstruct: -> [StandardError]
+
+      def deconstruct_key: -> { cause: StandardError }
+    end
+  end
+end

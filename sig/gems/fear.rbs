@@ -1,5 +1,5 @@
 module Fear
-  def self?.none: -> Option[top]
-  def self?.some: [T] (T) -> Some[T]
-  def self?.option: [T] (T | nil) -> Option[T]
+  def self?.none: -> _Option[bot]
+  def self?.some: [T] (T) -> _Option[T]
+  def self?.option: [T] (T | nil) -> _Option[T]
 end

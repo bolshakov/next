@@ -25,10 +25,6 @@ module Next
 
     # Spawn a new child actor and supervise it
     #
-    #   @param props [Fear::Actor::Props]
-    #   @param name [String]
-    #   @return [Fear::Actor::Reference]
-    #
     def actor_of(props, name = SecureRandom.uuid)
       if @children.has_key?(name.to_s)
         raise ActorNameError, "name #{name.inspect} is already used by another actor"
@@ -57,6 +53,29 @@ module Next
     private def add_child(child)
       synchronize do
         @children[child.name] = child
+      end
+    end
+
+    # Unregister child
+    private def remove_child(child)
+      @children.delete_if do |_key, value|
+        value == child
+      end
+    end
+
+    # Gets child with the given +Reference+
+    private def child_by_reference(reference)
+      if @children.has_value?(reference)
+        Fear.some(reference)
+      else
+        Fear.none
+      end
+    end
+
+    # Asynchronously terminates child by reference
+    def stop(child)
+      child_by_reference(child).each do
+        child << SystemMessages::Terminate
       end
     end
   end

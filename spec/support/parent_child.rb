@@ -6,6 +6,8 @@ class ChildActor < ActorWithInspector
   def receive(message)
     if message == :get_parent
       inspector << context.parent
+    else
+      super(message)
     end
   end
 end
@@ -21,6 +23,8 @@ class ParentActor < ActorWithInspector
       inspector << context.actor_of(ChildActor.props(inspector:), name)
     in :get_children
       inspector << context.children.map(&:name)
+    else
+      super(message)
     end
   end
 end
