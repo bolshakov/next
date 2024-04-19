@@ -11,7 +11,7 @@ module Next
     end
 
     def inspect
-      name
+      "#<#{name}>"
     end
     alias_method :to_s, :inspect
     alias_method :to_str, :inspect

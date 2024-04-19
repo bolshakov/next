@@ -1,15 +1,12 @@
 module Next
   module SystemMessages
-    class Initialize
+    class Initialize < Data
       include SystemMessage
 
       attr_reader parent: Reference
 
-      def initialize: (Reference) -> void
-
-      def deconstruct: -> [Reference]
-
-      def deconstruct_key: -> {parent: Reference}
+      def self.new: (parent: Reference) -> instance
+                  | (Reference) -> instance
     end
   end
 end

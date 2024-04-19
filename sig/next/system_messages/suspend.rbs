@@ -1,7 +1,9 @@
 module Next
   module SystemMessages
-    class Suspend
+    class Suspend < Data
       include SystemMessage
+
+      def self.new: -> instance
     end
   end
 end

@@ -44,8 +44,6 @@ module Next
             handle_processing_error(error)
           end
         end
-      rescue => error
-        puts ">> error: #{error}"
       end
     end
 

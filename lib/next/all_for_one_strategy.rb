@@ -23,7 +23,7 @@ module Next
     def process_failure(cause:, child:, restart:, context:)
       unless context.children.empty?
         if restart
-          context.children.each { restart_child(child: _1, cause: cause, suspend_first: true) }
+          context.children.each { restart_child(child: _1, cause:, suspend_first: true) }
         else
           context.children.each { context.stop(_1) }
         end

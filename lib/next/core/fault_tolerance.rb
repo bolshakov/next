@@ -70,7 +70,7 @@ module Next
 
       private def suspend_children
         children.each do |child|
-          child.tell SystemMessages::Suspend.new
+          child.tell SystemMessages::Suspend
         end
       end
 

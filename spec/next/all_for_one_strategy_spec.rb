@@ -49,7 +49,7 @@ RSpec.describe Next::AllForOneStrategy, :actor_system do
 
     it "sends SystemMessages::Recreate to all supervises and returns true" do
       [supervised, non_failing_supervised].each do |child|
-        expect(child).to receive(:tell).with(be_kind_of(Next::SystemMessages::Suspend)).ordered
+        expect(child).to receive(:tell).with(Next::SystemMessages::Suspend).ordered
         expect(child).to receive(:tell).with(be_kind_of(Next::SystemMessages::Recreate)).ordered
       end
 

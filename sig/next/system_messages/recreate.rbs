@@ -1,15 +1,12 @@
 module Next
   module SystemMessages
-    class Recreate
+    class Recreate < Data
       include SystemMessage
 
       attr_reader cause: StandardError
 
-      def initialize: (StandardError) -> void
-
-      def deconstruct: -> [StandardError]
-
-      def deconstruct_key: -> { cause: StandardError }
+      def self.new: (cause: StandardError) -> instance
+                  | (StandardError) -> instance
     end
   end
 end

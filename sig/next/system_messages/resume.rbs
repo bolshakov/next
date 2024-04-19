@@ -1,13 +1,10 @@
 module Next
   module SystemMessages
-    class Resume
+    class Resume < Data
       attr_reader caused_by_failure: StandardError
 
-      def initialize: (StandardError) -> void
-
-      def deconstruct: -> [StandardError]
-
-      def deconstruct_key: -> { caused_by_failure: StandardError }
+      def self.new: (caused_by_failure: StandardError) -> instance
+                  | (StandardError) -> instance
     end
   end
 end

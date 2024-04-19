@@ -3,6 +3,6 @@
 module Next
   module SystemMessages
     # @api private
-    Resume = Data.define(:caused_by_failure).include(SystemMessage)
+    Terminate = SingletonObject.new("Next::SystemMessages::Terminate").extend(SystemMessage)
   end
 end

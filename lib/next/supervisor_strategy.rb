@@ -83,13 +83,13 @@ module Next
     rescue NoMatchingPatternError
       ESCALATE
     end
-    # @return [void]
+
     private def resume_child(child:, cause:)
       child.tell(SystemMessages::Resume.new(cause))
     end
 
     private def restart_child(child:, cause:, suspend_first:)
-      child.tell(SystemMessages::Suspend.new) if suspend_first
+      child.tell(SystemMessages::Suspend) if suspend_first
       child.tell(SystemMessages::Recreate.new(cause))
     end
   end

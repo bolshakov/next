@@ -1,15 +1,12 @@
 module Next
   module SystemMessages
-    class Supervise
+    class Supervise < Data
       include SystemMessage
 
       attr_reader child: Reference
 
-      def initialize: (Reference) -> void
-
-      def deconstruct: -> [Reference]
-
-      def deconstruct_key: -> { child: Reference }
+      def self.new: (child: Reference) -> instance
+                  | (Reference) -> instance
     end
   end
 end
