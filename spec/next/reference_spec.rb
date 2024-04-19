@@ -10,7 +10,7 @@ RSpec.describe Next::Reference do
   end
 
   context "with props" do
-    subject(:ref) { described_class.new(props, name: "test") }
+    subject(:ref) { described_class.new(props, name: "test", parent: nil) }
 
     context "with arguments" do
       let(:props) { Next.props(klass, starts_at: 4) }
@@ -28,7 +28,7 @@ RSpec.describe Next::Reference do
   end
 
   context "with actor class", pending: "not yet implemented" do
-    subject(:ref) { described_class.new(klass, name: "test") }
+    subject(:ref) { described_class.new(klass, name: "test", parent: nil) }
 
     it { is_expected.to be_kind_of(Next::Reference) }
     it { is_expected.to have_attributes(name: "test") }
@@ -91,6 +91,27 @@ RSpec.describe Next::Reference do
 
     it "returns response from the actor" do
       is_expected.to be_some_of("foo")
+    end
+  end
+
+  describe "#path", :actor_system do
+    let(:parent_ref) { system.actor_of(ParentActor.props, "path-test-parent") }
+
+    context "when root actor" do
+      subject { parent_ref.path }
+
+      it { is_expected.to eq("next://test-system/user/path-test-parent") }
+    end
+
+    context "when child actor" do
+      subject { child_ref.path }
+
+      let(:child_ref) do
+        parent_ref << [:create_child, "path-test-child"]
+        expect_message(be_kind_of(Next::Reference))
+      end
+
+      it { is_expected.to eq("next://test-system/user/path-test-parent/path-test-child") }
     end
   end
 end

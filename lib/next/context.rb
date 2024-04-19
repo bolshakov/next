@@ -29,7 +29,7 @@ module Next
       if @children.has_key?(name.to_s)
         raise ActorNameError, "name #{name.inspect} is already used by another actor"
       else
-        Reference.new(props, name:).tap do |child|
+        Reference.new(props, name:, parent: identity).tap do |child|
           identity << SystemMessages::Supervise.new(child)
         end
       end

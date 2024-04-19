@@ -8,7 +8,7 @@ module Next
     attr_reader serialized_execution: SerializedExecution
     attr_reader props: Props[ActorClass]
 
-    def initialize: ({props: Props[ActorClass], identity: Reference}) -> void
+    def initialize: ({props: Props[ActorClass], identity: Reference, parent: Reference?}) -> void
 
     def process_envelope: (Envelope)-> void
 

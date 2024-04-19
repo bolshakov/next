@@ -19,12 +19,10 @@ module Next
     attr_reader :core
     protected :core
 
-    # @param props [Next::Props]
-    # @param name [String]
-    def initialize(props, name: SecureRandom.uuid)
+    def initialize(props, parent:, name: SecureRandom.uuid)
       @props = props
       @name = name.to_s
-      @core = start_actor
+      @core = start_actor(parent:)
       freeze
     end
 
@@ -49,10 +47,9 @@ module Next
     def ask(message, sender = LocalStorage.current_identity)
       promise = Fear::Promise.new
 
-      ask_support =
-        Reference
-          .new(AskSupport.props(promise))
-          .tell(AskSupport::Ask.new(self, message))
+      ask_support = core
+        .actor_of(AskSupport.props(promise))
+        .tell(AskSupport::Ask.new(self, message))
 
       # This actor is supervising AskSupport
       self << SystemMessages::Supervise.new(ask_support)
@@ -66,6 +63,14 @@ module Next
         .to_option
     rescue Timeout::Error
       Fear.none
+    end
+
+    def path
+      if core.parent == self # root actor
+        ["next:/", name].join("/")
+      else
+        [core.parent.path, name].join("/")
+      end
     end
 
     # @param other [Object]
@@ -82,8 +87,8 @@ module Next
     end
     alias_method :inspect, :to_s
 
-    private def start_actor
-      Core.new(props:, identity: self)
+    private def start_actor(parent:)
+      Core.new(props:, identity: self, parent:)
     end
   end
 end

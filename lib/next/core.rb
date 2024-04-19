@@ -21,6 +21,7 @@ module Next
         @serialized_execution = SerializedExecution.new.tap(&:suspend!)
         @props = opts[:props]
         @identity = opts[:identity]
+        @parent = opts[:parent]
       end
     end
 
