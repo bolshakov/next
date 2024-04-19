@@ -3,19 +3,19 @@
 require "support/supervision"
 
 RSpec.describe Next::OneForOneStrategy, :actor_system do
-  let(:supervision_strategy) do
+  let(:supervisor_strategy) do
     described_class.new do |error|
       case error
-      when NoMethodError then Next::SupervisionStrategy::RESUME
-      when ZeroDivisionError then Next::SupervisionStrategy::RESTART
-      when ArgumentError then Next::SupervisionStrategy::STOP
-      when NotImplementedError then Next::SupervisionStrategy::ESCALATE
+      when NoMethodError then Next::SupervisorStrategy::RESUME
+      when ZeroDivisionError then Next::SupervisorStrategy::RESTART
+      when ArgumentError then Next::SupervisorStrategy::STOP
+      when NotImplementedError then Next::SupervisorStrategy::ESCALATE
       end
     end
   end
 
   subject(:handle_failure) do
-    supervision_strategy.handle_failure(
+    supervisor_strategy.handle_failure(
       cause: error,
       child: supervised,
       context: supervisor_context
@@ -97,10 +97,10 @@ RSpec.describe Next::OneForOneStrategy, :actor_system do
   context "when decider raises NoMatchingPatternError" do
     let(:error) { Next::Error.new(error_message) }
     let(:error_message) { "something went wrong" }
-    let(:supervision_strategy) do
+    let(:supervisor_strategy) do
       described_class.new do |error|
         case error
-        in NoMethodError then Next::SupervisionStrategy::RESUME
+        in NoMethodError then Next::SupervisorStrategy::RESUME
         end
       end
     end

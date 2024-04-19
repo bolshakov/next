@@ -41,11 +41,11 @@ module Next
       # Reacts on +SystemMessages::Failed+ message received from a child.
       # Applies configured supervision strategy.
       #
-      # @see [Next::SupervisionStrategy]
+      # @see [Next::SupervisorStrategy]
       private def handle_failure(child, cause)
         case child_by_reference(child)
         when Fear::Some
-          unless actor.supervision_strategy.handle_failure(child: child, cause: cause, context: self)
+          unless actor.supervisor_strategy.handle_failure(child: child, cause: cause, context: self)
             raise cause
           end
         when Fear::None

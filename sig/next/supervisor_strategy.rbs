@@ -1,5 +1,5 @@
 module Next
-  class SupervisionStrategy
+  class SupervisorStrategy
     type decider = ^(StandardError) -> Symbol?
     DEFAULT_DECIDER: decider
     DIRECTIVES: Array[Symbol]
@@ -8,7 +8,7 @@ module Next
     RESUME: Symbol
     STOP: Symbol
 
-    def self?.default_strategy: -> SupervisionStrategy
+    def self?.default_strategy: -> SupervisorStrategy
 
     def self?.default_decider: -> decider
 

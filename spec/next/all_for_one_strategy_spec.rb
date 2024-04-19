@@ -4,20 +4,20 @@ require "support/supervision"
 
 RSpec.describe Next::AllForOneStrategy, :actor_system do
   subject(:handle_failure) do
-    supervision_strategy.handle_failure(
+    supervisor_strategy.handle_failure(
       cause: error,
       child: supervised,
       context: supervisor_context
     )
   end
 
-  let(:supervision_strategy) do
+  let(:supervisor_strategy) do
     described_class.new do |error|
       case error
-      when NoMethodError then Next::SupervisionStrategy::RESUME
-      when ZeroDivisionError then Next::SupervisionStrategy::RESTART
-      when ArgumentError then Next::SupervisionStrategy::STOP
-      when NotImplementedError then Next::SupervisionStrategy::ESCALATE
+      when NoMethodError then Next::SupervisorStrategy::RESUME
+      when ZeroDivisionError then Next::SupervisorStrategy::RESTART
+      when ArgumentError then Next::SupervisorStrategy::STOP
+      when NotImplementedError then Next::SupervisorStrategy::ESCALATE
       end
     end
   end

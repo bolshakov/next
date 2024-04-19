@@ -5,10 +5,10 @@ require "support/supervision"
 RSpec.describe Next::Core::FaultTolerance, :actor_system do
   let(:failure_flag) { nil }
   let(:supervised) { supervisor.ask!([:create_supervised, supervised_props]).get }
-  let(:supervisor_props) { SupervisionTestingActor.props(supervision_strategy) }
+  let(:supervisor_props) { SupervisionTestingActor.props(supervisor_strategy) }
   let(:supervised_props) { SupervisionTestingActor.props }
   let(:supervisor) { system.actor_of(supervisor_props, "supervisor") }
-  let(:supervision_strategy) { TestingSupervisionStrategy.new }
+  let(:supervisor_strategy) { TestingSupervisorStrategy.new }
 
   context "when error happens during initialization" do
     let(:failure_flag) { system.actor_of(FeatureFlag.props(true)) }

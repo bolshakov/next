@@ -12,7 +12,11 @@ module Next
       end
     end
 
+    # Shortened for +context.sender+. Refers to a sender of a last message.
     def sender = context.sender
+
+    # Shortened for +context.identity+. You cas send messages to yourself using this handler.
+    def identity = context.identity
 
     # @api private
     def around_post_stop = post_stop
@@ -43,6 +47,7 @@ module Next
     def pre_start
     end
 
-    def supervision_strategy = SupervisionStrategy.default_strategy
+    # Supervision strategy. It is applied to actor's children.
+    def supervisor_strategy = SupervisorStrategy.default_strategy
   end
 end

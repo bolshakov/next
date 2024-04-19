@@ -7,7 +7,7 @@ module Next
   # +Next::AllForOneStrategy+ instead.
   #
   # @abstract
-  class SupervisionStrategy
+  class SupervisorStrategy
     DIRECTIVES = [
       ESCALATE = :escalate,
       RESTART = :restart,

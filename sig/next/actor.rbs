@@ -10,6 +10,8 @@ module Next
 
     def around_pre_restart: (reason: StandardError, message: Fear::Option[untyped]) -> void
 
+    def identity: -> Reference
+
     def post_restart: (reason: StandardError) -> void
 
     def post_stop: -> void
@@ -21,6 +23,6 @@ module Next
     def sender: -> Reference
     def receive: (untyped) -> void
 
-    def supervision_strategy: -> SupervisionStrategy
+    def supervisor_strategy: -> SupervisorStrategy
   end
 end

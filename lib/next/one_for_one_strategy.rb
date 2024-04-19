@@ -17,7 +17,7 @@ module Next
   #     end
   #   end
   #
-  class OneForOneStrategy < SupervisionStrategy
+  class OneForOneStrategy < SupervisorStrategy
     # Restarts or stop a child depending on +restart+ value
     def process_failure(cause:, child:, restart:, context:)
       if restart

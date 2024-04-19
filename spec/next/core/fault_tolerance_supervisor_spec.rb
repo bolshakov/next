@@ -3,8 +3,8 @@
 require "support/supervision"
 
 RSpec.describe Next::Core::FaultTolerance, :actor_system do
-  let(:supervision_strategy_class) do
-    Class.new(Next::SupervisionStrategy) do
+  let(:supervisor_strategy_class) do
+    Class.new(Next::SupervisorStrategy) do
       attr_reader :handling_result
 
       def initialize(handling_result)
@@ -17,8 +17,8 @@ RSpec.describe Next::Core::FaultTolerance, :actor_system do
     end
   end
 
-  let(:spying_supervision_strategy_class) do
-    Class.new(Next::SupervisionStrategy) do
+  let(:spying_supervisor_strategy_class) do
+    Class.new(Next::SupervisorStrategy) do
       attr_reader :spy
 
       def initialize(spy)
@@ -34,13 +34,13 @@ RSpec.describe Next::Core::FaultTolerance, :actor_system do
 
   # This is the main actor under test. We test its supervision logic here
   let(:supervisor) { supervisors_supervisor.ask!([:create_supervised, supervisor_props]).get }
-  let(:supervisor_props) { SupervisionTestingActor.props(supervision_strategy) }
-  let(:supervision_strategy) { supervision_strategy_class.new(handling_result) }
+  let(:supervisor_props) { SupervisionTestingActor.props(supervisor_strategy) }
+  let(:supervisor_strategy) { supervisor_strategy_class.new(handling_result) }
 
   # The sole purpose of this actor is to test escalation path of the +supervisor+
   let(:supervisors_supervisor) { system.actor_of(supervisors_supervisor_props, "supervisor's supervisor") }
-  let(:supervisors_supervisor_props) { SupervisionTestingActor.props(spying_supervision_strategy) }
-  let(:spying_supervision_strategy) { spying_supervision_strategy_class.new(test_actor) }
+  let(:supervisors_supervisor_props) { SupervisionTestingActor.props(spying_supervisor_strategy) }
+  let(:spying_supervisor_strategy) { spying_supervisor_strategy_class.new(test_actor) }
 
   context "when SystemMessages::Failed received" do
     let(:error) { NoMethodError.new(error_message) }

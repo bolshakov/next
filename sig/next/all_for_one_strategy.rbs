@@ -1,4 +1,4 @@
 module Next
-  class AllForOneStrategy < SupervisionStrategy
+  class AllForOneStrategy < SupervisorStrategy
   end
 end

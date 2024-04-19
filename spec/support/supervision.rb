@@ -12,15 +12,15 @@
 #
 class SupervisionTestingActor < Next::Actor
   class << self
-    # @param supervision_strategy [Next::SupervisorStrategy, nil]
+    # @param supervisor_strategy [Next::SupervisorStrategy, nil]
     #   can be configured with a custom supervision strategy. If not passed, it uses default one.
     # @param failure_flag [Next::Reference, nil]
     #   A feature flag, that controls if initializer should fail or not.
     #   @see SupervisionTestingFeatureFlag for details
-    def props(supervision_strategy = nil, failure_flag = nil)
+    def props(supervisor_strategy = nil, failure_flag = nil)
       Next.props(
         self,
-        supervision_strategy: supervision_strategy,
+        supervisor_strategy: supervisor_strategy,
         failure_flag: Fear.option(failure_flag)
       )
     end
@@ -29,10 +29,10 @@ class SupervisionTestingActor < Next::Actor
   attr_accessor :supervised
   attr_accessor :counter
 
-  # @param supervision_strategy [Next::SupervisionStrategy, nil]
+  # @param supervisor_strategy [Next::SupervisorStrategy, nil]
   # @param failure_flag [Fear::Option<Next::Reference>]
-  def initialize(supervision_strategy:, failure_flag:)
-    @supervision_strategy = supervision_strategy
+  def initialize(supervisor_strategy:, failure_flag:)
+    @supervisor_strategy = supervisor_strategy
     @counter = 1
     if failure_flag.flat_map { _1.ask!(:enabled?) }.include?(true)
       raise NoMethodError
@@ -56,18 +56,18 @@ class SupervisionTestingActor < Next::Actor
     end
   end
 
-  def supervision_strategy
-    @supervision_strategy || super
+  def supervisor_strategy
+    @supervisor_strategy || super
   end
 end
 
-class TestingSupervisionStrategy < Next::SupervisionStrategy
+class TestingSupervisorStrategy < Next::SupervisorStrategy
   def handle_failure(cause:, **)
     true
   end
 end
 
-# A "feature flag" actor implemnets the following protocol:
+# A "feature flag" actor implements the following protocol:
 #   * +true+ enables feature
 #   * +false+ disables feature
 #   * +:enabled?+ checks if a feature is enabled or not
