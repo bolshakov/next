@@ -19,6 +19,4 @@ module Next
   end
 
   def self.system(name) = System.new(name)
-
-  PoisonPill = AutoReceivedMessage.new("PoisonPill")
 end
