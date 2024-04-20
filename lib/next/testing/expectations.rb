@@ -97,6 +97,23 @@ module Next
         end
       end
 
+      # Expects all of the given messages to be received in a given timeout
+      #
+      def expect_all_messages(*expected, timeout: DEFAULT_TIMEOUT) # rubocop: disable Metrics/AbcSize
+        received = receive_many(expected.count, max: timeout)
+        missing = expected - received.map(&:message)
+        unexpected = received.reject { |envelope| expected.include?(envelope.message) }
+
+        unexpected_messages = unexpected
+          .map { |envelope| "#{envelope.message.inspect} from #{envelope.sender.name}" }
+          .join(", ")
+
+        aggregate_failures do
+          expect(missing).to be_empty, "not found: #{missing.map(&:inspect).join(", ")}"
+          expect(unexpected).to be_empty, "found unexpected: #{unexpected_messages}"
+        end
+      end
+
       # Expects the given message to be received in a given timeout
       private def receive_one(timeout:)
         Timeout.timeout(timeout) do
@@ -104,6 +121,30 @@ module Next
         end
       rescue Timeout::Error
         Fear.none
+      end
+
+      private def receive_many(n, max: nil)
+        wail_till = Time.now + max
+        messages = []
+
+        loop do
+          remaining_timout = wail_till - Time.now
+          case receive_one(timeout: remaining_timout)
+          in Fear::None
+            raise StopIteration
+          in Fear::Some(received)
+            messages.push(received)
+            raise StopIteration if messages.size >= n
+          end
+        end
+
+        if messages.size != n
+          raise ::RSpec::Expectations::ExpectationNotMetError,
+            "timout (#{max}) expecting #{n} messages (got #{messages.count})",
+            caller(1)
+        else
+          messages
+        end
       end
 
       private def expect_match(expected, actual, message = nil) # rubocop: disable Metrics/AbcSize

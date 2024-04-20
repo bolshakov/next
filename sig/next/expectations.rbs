@@ -5,6 +5,8 @@ module Next
 
       def await_condition: (?timeout: Numeric, ?interval: Numeric, ?message: String) { -> bool } -> void
 
+      def expect_all_messages: (*untyped, ?timeout: Numeric) -> void
+
       def expect_message: (untyped, ?timeout: Numeric) { -> void } -> untyped
 
       def expect_no_message: (untyped, ?timeout: Numeric, ?interval: Numeric)-> untyped
@@ -16,6 +18,8 @@ module Next
       def expect_match: (untyped, Envelope, String?)-> void
 
       def expect_not_match: (untyped, Envelope, String?)-> void
+
+      def receive_many: (Integer, ?max: Numeric) -> Array[untyped]
 
       def receive_one: (timeout: Numeric) -> Fear::Option[untyped]
     end
