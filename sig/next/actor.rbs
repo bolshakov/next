@@ -10,6 +10,8 @@ module Next
 
     def around_pre_restart: (reason: StandardError, message: Fear::Option[untyped]) -> void
 
+    def around_pre_start: -> untyped
+
     def identity: -> Reference
 
     def post_restart: (reason: StandardError) -> void

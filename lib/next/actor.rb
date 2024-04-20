@@ -19,6 +19,13 @@ module Next
     def identity = context.identity
 
     # @api private
+    def around_pre_start = pre_start
+
+    # User-overridable callback.
+    def pre_start
+    end
+
+    # @api private
     def around_post_stop = post_stop
 
     # User-overridable callback executed after stopping an actor
@@ -42,10 +49,6 @@ module Next
 
     # User-overridable callback. By default it calls +pre_start+ hook.
     def post_restart(reason:) = pre_start
-
-    # User-overridable callback.
-    def pre_start
-    end
 
     # Supervision strategy. It is applied to actor's children.
     def supervisor_strategy = SupervisorStrategy.default_strategy

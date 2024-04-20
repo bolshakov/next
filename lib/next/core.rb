@@ -112,6 +112,7 @@ module Next
       self.parent = parent
       serialized_execution.resume!
       self.actor = props.__new_actor__(self)
+      actor.around_pre_start
     rescue
       raise ActorInitializationError.new("exception during creation", identity)
     end
