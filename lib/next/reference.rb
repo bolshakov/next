@@ -19,10 +19,10 @@ module Next
     attr_reader :core
     protected :core
 
-    def initialize(props, parent:, name: SecureRandom.uuid)
+    def initialize(props, parent:, system:, name: SecureRandom.uuid)
       @props = props
       @name = name.to_s
-      @core = start_actor(parent:)
+      @core = start_actor(parent:, system:)
       freeze
     end
 
@@ -87,8 +87,8 @@ module Next
     end
     alias_method :inspect, :to_s
 
-    private def start_actor(parent:)
-      Core.new(props:, identity: self, parent:)
+    private def start_actor(parent:, system:)
+      Core.new(props:, identity: self, parent:, system:)
     end
   end
 end

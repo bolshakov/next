@@ -10,7 +10,9 @@ RSpec.describe Next::Reference do
   end
 
   context "with props" do
-    subject(:ref) { described_class.new(props, name: "test", parent: nil) }
+    subject(:ref) { described_class.new(props, name: "test", parent: nil, system:) }
+
+    let(:system) { instance_double(Next::System) }
 
     context "with arguments" do
       let(:props) { Next.props(klass, starts_at: 4) }

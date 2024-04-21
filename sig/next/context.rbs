@@ -12,6 +12,8 @@ module Next
     attr_accessor identity: Reference
     attr_accessor parent: Reference
 
+    attr_reader system: System
+
     def actor_of: [T < Actor] (Props[T], ?String)-> Reference
     def sender: -> Reference
     def stop: (Reference) -> void

@@ -22,6 +22,7 @@ module Next
         @props = opts[:props]
         @identity = opts[:identity]
         @parent = opts[:parent]
+        @system = opts[:system]
       end
     end
 
