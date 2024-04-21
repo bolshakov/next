@@ -24,9 +24,9 @@ module Next
           # FIXME: make message available as Context#current_message and pass as message
           actor.around_pre_restart(reason: cause, message: Fear::None)
 
-          self.actor = props.__new_actor__(self)
+          self.actor = create_actor
+
           actor.around_post_restart(reason: cause)
-          serialized_execution.resume!
         else
           # log
           create_on_failure

@@ -72,6 +72,8 @@ module Next
 
     private def process_message(message)
       actor.public_send(current_behaviour, message)
+    rescue NoMatchingPatternError
+      # Death letter queue
     end
 
     private def auto_receive_message(message)
@@ -79,10 +81,6 @@ module Next
       in PoisonPill
         identity << SystemMessages::Terminate
       end
-    end
-
-    private def current_behaviour
-      :receive
     end
 
     # Schedules blocks to be executed on executor sequentially
@@ -111,11 +109,16 @@ module Next
 
     private def initialize_actor(parent)
       self.parent = parent
-      serialized_execution.resume!
-      self.actor = props.__new_actor__(self)
+      self.actor = create_actor
       actor.around_pre_start
     rescue
       raise ActorInitializationError.new("exception during creation", identity)
+    end
+
+    private def create_actor
+      serialized_execution.resume!
+      become(Context::DEFAULT_BEHAVIOUR)
+      props.__new_actor__(self)
     end
 
     private def actor

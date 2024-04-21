@@ -8,6 +8,9 @@ module Next
   #
   # @api public
   module Context
+    DEFAULT_BEHAVIOUR = :receive
+    public_constant(:DEFAULT_BEHAVIOUR)
+
     # Refers to actor's own +Reference+. Therefore an actor
     # can send a message to itself.
     #
@@ -38,12 +41,35 @@ module Next
     # Refers to the actor system
     attr_reader :system
 
+    attr_reader :current_behaviour
+    private :current_behaviour
+
     def initialize
       super()
 
       synchronize do
         @children = {}
       end
+    end
+
+    # Change actor's behaviour
+    # @param behaviour refers to a method name implementing this behaviour
+    #
+    # @example
+    #   def receive(message)
+    #     case message
+    #     in 'Become happy'
+    #       context.become(:happy)
+    #     end
+    #   end
+    #
+    #   def happy(message)
+    #     # ...
+    #   end
+    #
+    def become(behaviour)
+      @current_behaviour = behaviour
+      self
     end
 
     # Spawn a new child actor and supervise it

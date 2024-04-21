@@ -26,6 +26,8 @@ module Next
 
     def auto_receive_message: (untyped)-> void
 
+    def create_actor: -> ActorClass
+
     def current_behaviour: -> Symbol
 
     def handle_death_watch_notification: (Reference) -> void

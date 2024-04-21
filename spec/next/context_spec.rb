@@ -1,6 +1,56 @@
 # frozen_string_literal: true
 
 RSpec.describe Next::Context, :actor_system do
+  describe "#become" do
+    let(:actor_class) do
+      Class.new(Next::Actor) do
+        def receive(message)
+          case message
+          when :A
+            sender.tell(message)
+            context.become(:receive2)
+          when :B, :D
+            sender.tell(message)
+          end
+        end
+
+        def receive2(message)
+          case message
+          in :C
+            sender.tell(message)
+            context.become(:receive)
+          in :fail
+            raise "expected error"
+          end
+        end
+      end
+    end
+    let(:actor) { system.actor_of(Next.props(actor_class), "test") }
+
+    it "ignores unhandled :B message" do
+      actor.tell :A
+      actor.tell :B
+      actor.tell :C
+      actor.tell :D
+
+      expect_message(:A)
+      expect_message(:C)
+      expect_message(:D)
+    end
+
+    context "when a failure happens" do
+      it "gets default behaviour after the restart" do
+        actor.tell :A
+        actor.tell :B
+        actor.tell :fail
+        actor.tell :A
+
+        expect_message(:A)
+        expect_message(:A)
+      end
+    end
+  end
+
   describe "#parent" do
     context "when actor is a root actor" do
       let(:actor) { system.actor_of(ChildActor.props) }

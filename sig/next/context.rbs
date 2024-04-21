@@ -2,21 +2,27 @@ module Next
   interface _ContextWithChildren
     def child: (String | Symbol)-> Fear::_Option[Reference]
     def children: ->Set[Reference]
+    def stop: (Reference) -> void
   end
 
   module Context
     include Concurrent::Synchronization::_LockableObject
     include _ContextWithChildren
+
+    DEFAULT_BEHAVIOUR: Symbol
+
     @children: Hash[String, Reference]
 
+    attr_reader current_behaviour: Symbol
     attr_accessor identity: Reference
     attr_accessor parent: Reference
-
     attr_reader system: System
 
     def actor_of: [T < Actor] (Props[T], ?String)-> Reference
+
+    def become: (Symbol) -> void
+
     def sender: -> Reference
-    def stop: (Reference) -> void
 
     private
 
@@ -25,6 +31,5 @@ module Next
     def child_by_reference: (Reference) -> Fear::_Option[Reference]
 
     def remove_child: (Reference) -> void
-
   end
 end
