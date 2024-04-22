@@ -37,12 +37,6 @@ actor_system = Next.system("example")
 
 ### Creating Actors
 
-```ruby
-actor_system = Next.system("example")
-```
-
-### Creating Actors
-
 Actors are implemented by inheriting from the `Next::Actor` class and implementing the `#receive` method. 
 The `#receive` method may either process or ignore a message received as an argument.
 
