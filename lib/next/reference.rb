@@ -58,9 +58,12 @@ module Next
     end
 
     def ask!(message, sender = LocalStorage.current_identity, timeout: 3)
-      ask(message, sender)
-        .then { Fear::Await.result(_1, timeout) }
-        .to_option
+      case ask(message, sender).then { Fear::Await.result(_1, timeout) }
+      in Fear::Success(value)
+        Fear.some(value)
+      in Fear::None
+        Fear.none
+      end
     rescue Timeout::Error
       Fear.none
     end
@@ -86,6 +89,18 @@ module Next
       "#<Next::Reference name=#{name}>"
     end
     alias_method :inspect, :to_s
+
+    # @api private
+    def stop
+      tell(SystemMessages::Terminate)
+
+      core.termination_future
+    end
+
+    # @api private
+    def termination_future
+      core.termination_future
+    end
 
     private def start_actor(parent:, system:)
       Core.new(props:, identity: self, parent:, system:)

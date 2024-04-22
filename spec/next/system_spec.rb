@@ -31,4 +31,16 @@ RSpec.describe Next::System, :actor_system do
       end
     end
   end
+
+  describe "#terminate" do
+    let(:echo) { system.actor_of(EchoActor.props, "echo1") }
+
+    it "does not create actors after termination" do
+      system.terminate
+
+      system.actor_of(EchoActor.props, "echo2").tell "sent after termination"
+
+      expect_no_message
+    end
+  end
 end

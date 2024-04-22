@@ -1,0 +1,8 @@
+module Next
+  class Terminated < Data
+    attr_reader actor: Reference
+
+    def self.new: (actor: Reference) -> instance
+                | (Reference) -> instance
+  end
+end

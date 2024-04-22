@@ -192,6 +192,63 @@ exception as an argument and returns a symbol instructing Next on how to handle 
 By default, Next uses the "One for One" supervision strategy, which restarts a failing child actor. To use the 
 "All for One" strategy, you can utilize `Next::AllForOneStrategy` instead of `Next::OneForOneStrategy`.
 
+### Shutting Down the Actor System
+
+Shutting down an actor system gracefully is essential for ensuring proper resource cleanup and preventing data loss. 
+In the Next framework, terminating an actor system involves stopping all actors within the system in an orderly manner.
+During the actor system shutdown, all the necessary actor callbacks are executed.
+
+To shut down an actor system, you have two main methods available: `terminate` and `terminate!`.
+
+The `terminate` method initiates the shutdown process by stopping the root actor of the system, which triggers 
+the stopping of all its children (which include user-defined actors). The method does not wait for 
+the termination to complete and returns an unresolved `Fear::Future` of `Next::Terminated` immediately.
+
+```ruby
+# Gracefully terminate the actor system
+actor_system.terminate
+```
+
+The `terminate!` method also initiates the shutdown process by stopping the root actor of the system, but it blocks 
+the current thread until the termination is complete. This ensures that the termination is fully processed 
+before continuing.
+
+```ruby
+# Gracefully terminate the actor system, blocking until termination is finished
+actor_system.terminate!
+```
+
+If you need to block the current thread until the actor system is terminated, you can use the `await_termination` 
+method. This method waits until the termination future resolves and returns the result. It's important to note that 
+this method does not trigger termination; it simply prevents the application from exiting while the actor system 
+is still running.
+
+```ruby
+# Create an actor system
+actor_system = Next.system("example")
+
+# Block until the actor system is fully terminated
+actor_system.await_termination
+```
+
+## Handling Interrupt Signals
+
+When the application is terminated, Next can handle graceful shutdown by default. However, if a user wants to 
+**override** this signal handler, they need to call the `Next::System#terminate_all!` method manually. This method ensures 
+that all known actor systems are properly terminated even when an interrupt signal (SIGINT) is received.
+
+Example:
+```ruby
+Signal.trap("INT") {
+  Next::System.terminate_all!
+  # user defined code
+  exit
+}
+```
+
+This signal handler ensures that all actor systems are terminated when the user presses Ctrl+C or sends an 
+interrupt signal to the application.
+
 ### Testing
 
 `Next` comes with RSpec support. To activate it, include `rext/testing/rspec` and use the `:actor_system` shared context.

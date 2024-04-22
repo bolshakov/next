@@ -16,7 +16,12 @@ module Next
     def default_executor
       Concurrent.global_io_executor
     end
-  end
 
-  def self.system(name) = System.new(name)
+    def system(name) = System.new(name)
+  end
+end
+
+Signal.trap("INT") do
+  Next::System.terminate_all!
+  exit
 end

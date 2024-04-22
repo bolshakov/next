@@ -21,5 +21,7 @@ RSpec.shared_context :actor_testing, :actor_system do
 
   after do
     jailbreak.stop
+    system.terminate
+    system.await_termination
   end
 end

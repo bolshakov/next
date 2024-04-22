@@ -1,4 +1,6 @@
 module Fear
   module Try[Elem]
+    def get: -> Elem
+    def to_option: -> Option[Elem]
   end
 end

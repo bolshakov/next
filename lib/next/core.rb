@@ -15,9 +15,20 @@ module Next
     attr_reader :props
     private :props
 
+    attr_reader :termination_promise
+    private :termination_promise
+
+    attr_reader :termination_future
+
+    attr_writer :terminating
+    private :terminating=
+
     def initialize(opts = {})
       super()
       synchronize do
+        @terminating = false
+        @termination_promise = Fear::Promise.new
+        @termination_future = @termination_promise.to_future
         @serialized_execution = SerializedExecution.new.tap(&:suspend!)
         @props = opts[:props]
         @identity = opts[:identity]
@@ -100,6 +111,7 @@ module Next
       child_by_reference(child).each do
         remove_child(child)
       end
+      finish_terminate
     end
 
     private def supervise(child)
@@ -131,6 +143,10 @@ module Next
 
     private def actor=(value)
       @actor = value
+    end
+
+    private def terminating?
+      @terminating
     end
   end
 end

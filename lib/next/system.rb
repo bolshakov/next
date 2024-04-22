@@ -12,10 +12,22 @@ module Next
     attr_reader :user_root
     private :user_root
 
+    class << self
+      # Gracefully terminates all known actor systems
+      def terminate_all!
+        ObjectSpace
+          .each_object(self)
+          .map { |system| Thread.new { system.terminate! } }
+          .each(&:join)
+      end
+    end
+
     def initialize(name)
       @name = name
 
       start_actor_system
+      when_terminated.each { puts "\nActor System `#{name}` has been terminated." }
+
       freeze
     end
 
@@ -25,6 +37,31 @@ module Next
       promise = Fear::Promise.new
       user_root << UserRoot::CreateActor.new(props:, name:, promise:)
       Fear::Await.result(promise.to_future, timeout).get
+    end
+
+    # Gracefully terminates actor system
+    def terminate
+      root.stop
+    end
+
+    # Gracefully terminate actor system blocking until termination is finished
+    def terminate!
+      terminate
+      await_termination
+    end
+
+    # Returns termination future, so one can set hooks for
+    # actor system termination
+    def when_terminated
+      root.termination_future
+    end
+
+    TERMINATION_AWAIT_TIMEOUT = 100_000 * 365 * 24 * 60 * 60
+    private_constant(:TERMINATION_AWAIT_TIMEOUT)
+
+    # Blocks till actor system is terminated
+    def await_termination
+      Fear::Await.result(when_terminated, TERMINATION_AWAIT_TIMEOUT)
     end
 
     private def start_actor_system

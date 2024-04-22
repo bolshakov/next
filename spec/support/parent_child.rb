@@ -10,6 +10,10 @@ class ChildActor < ActorWithInspector
       super(message)
     end
   end
+
+  def post_stop
+    inspector << "#{identity.name} stopped"
+  end
 end
 
 class ParentActor < ActorWithInspector
@@ -26,5 +30,9 @@ class ParentActor < ActorWithInspector
     else
       super(message)
     end
+  end
+
+  def post_stop
+    inspector << "#{identity.name} stopped"
   end
 end

@@ -82,18 +82,30 @@ module Next
 
       # React on +SystemMessages::Terminate+ command from a parent.
       private def handle_terminate
+        self.terminating = true
         children.each { |child| stop(child) }
         serialized_execution.suspend!
         finish_terminate
       end
 
+      # It finisher actor termination if termination is necessary
+      # TODO: stop processing system message as well
       private def finish_terminate
-        actor.around_post_stop
-      rescue
-        # log it
-      ensure
-        self.actor = nil
-        parent.tell SystemMessages::DeathWatchNotification.new(identity)
+        return unless finish_terminate?
+
+        begin
+          actor.around_post_stop
+        rescue
+          # log it
+        ensure
+          self.actor = nil
+          parent.tell SystemMessages::DeathWatchNotification.new(identity)
+          termination_promise.success! Terminated.new(identity)
+        end
+      end
+
+      private def finish_terminate?
+        terminating? && children.empty?
       end
     end
   end

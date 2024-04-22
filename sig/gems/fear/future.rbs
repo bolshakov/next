@@ -3,5 +3,7 @@ module Fear
     def initialize: () -> void
                   | (Promise[T]) -> void
     def on_complete: { (Try[T]) -> void } -> self
+
+    def each: { (T) -> void } -> self
   end
 end

@@ -8,6 +8,8 @@ module Next
 
     alias << tell
 
+    def stop: -> Fear::Future[Terminated]
+
     def ask: (untyped, ?Reference)-> Fear::Future[untyped]
 
     def ask!: (untyped, ?Reference, ?timeout: Numeric) -> Fear::Option[untyped]
@@ -15,6 +17,8 @@ module Next
     def tell: (untyped, ?Reference) -> self
 
     def path: -> String
+
+    def termination_future: -> Fear::Future[Terminated]
 
     private
 

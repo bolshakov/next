@@ -5,8 +5,14 @@ module Next
 
     @actor: ActorClass?
 
+    @terminating: bool
+
     attr_reader serialized_execution: SerializedExecution
     attr_reader props: Props[ActorClass]
+
+    attr_writer terminating: bool
+    attr_reader termination_future: Fear::Future[Terminated]
+    attr_reader termination_promise: Fear::Promise[Terminated]
 
     def initialize: ({props: Props[ActorClass], identity: Reference, parent: Reference?, system: System}) -> void
 
@@ -39,5 +45,7 @@ module Next
     def process_system_message: (untyped) -> void
 
     def supervise: (Reference) -> void
+
+    def terminating?: -> bool
   end
 end

@@ -134,9 +134,7 @@ module Next
 
     # Unregister child
     private def add_child(child)
-      synchronize do
-        @children[child.name] = child
-      end
+      @children[child.name] = child
     end
 
     # Unregister child

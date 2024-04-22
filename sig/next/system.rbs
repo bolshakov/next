@@ -1,7 +1,10 @@
 module Next
   class System
+    TERMINATION_AWAIT_TIMEOUT: Numeric
     ROOT_PROPS: Props[Root]
     USER_ROOT_PROPS: Props[UserRoot]
+
+    def self.terminate_all!: -> void
 
     attr_reader name: String
     attr_reader root: Reference
@@ -10,6 +13,14 @@ module Next
     def initialize: (String) -> void
 
     def actor_of: [T < Actor] (Props[T], ?String) -> Reference
+
+    def await_termination: -> Fear::Try[Terminated]
+
+    def terminate: -> Fear::Future[Terminated]
+
+    def terminate!: -> Fear::Try[Terminated]
+
+    def when_terminated: -> Fear::Future[Terminated]
 
     private
 
