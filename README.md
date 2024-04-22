@@ -1,5 +1,7 @@
 # Next
 
+Next is an actor model framework for Ruby, designed to simplify concurrent programming.
+
 ## Installation
 
 Install the gem and add to the application's Gemfile by executing:
