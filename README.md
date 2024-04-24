@@ -1,4 +1,4 @@
-# Next
+# ⚡️ Next
 
 Next is an actor model framework for Ruby, designed to simplify concurrent programming.
 
