@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Tëma Bolshakov"]
   spec.email = ["tema@bolshakov.dev"]
 
-  spec.summary = "Actor framework for ruby"
+  spec.summary = "⚡️ Actor-powered concurrency for Ruby"
   spec.description = spec.summary
   spec.homepage = "https://github.com/bolshakov/next"
   spec.license = "MIT"
