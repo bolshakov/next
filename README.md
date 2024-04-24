@@ -338,7 +338,9 @@ RSpec.describe WaitActor, :actor_system do
     wait = system.actor_of(WaitActor)
     wait.tell(:start)
 
-    await_condition(timeout: 10, message: "The actor was not started within 10 secs") { wait.ask!(:started?).include?(true) }
+    await_condition(timeout: 10, message: "The actor was not started within 10 secs") do
+      wait.ask!(:started?).include?(true)
+    end
   end 
 end
 ```
