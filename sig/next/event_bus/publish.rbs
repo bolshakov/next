@@ -1,0 +1,10 @@
+module Next
+  class EventBus < Actor
+    class Publish < Data
+      attr_reader event: untyped
+
+      def self.new: (event: untyped) -> instance
+                  | (untyped) -> instance
+    end
+  end
+end

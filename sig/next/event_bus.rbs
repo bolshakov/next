@@ -1,0 +1,19 @@
+module Next
+  class EventBus < Actor
+    def self.props: -> Props[EventBus]
+
+    attr_reader subscriptions: Hash[untyped, Set[Reference]]
+
+    def initialize: -> void
+
+    def receive: (untyped) -> void
+
+    private
+
+    def create_subscription: (event: untyped, subscriber: Reference) -> void
+
+    def publish_event: (event: untyped) -> void
+
+    def subscribers: (untyped) -> Set[Reference]
+  end
+end
