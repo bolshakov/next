@@ -94,7 +94,7 @@ module Next
       did_it_run = begin
         job.executor.post { work(job) }
         true
-      rescue Concurrent::RejectedExecutionError => ex
+      rescue Concurrent::RejectedExecutionError
         false
       end
 

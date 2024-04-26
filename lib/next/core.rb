@@ -141,9 +141,8 @@ module Next
       !@actor.nil?
     end
 
-    private def actor=(value)
-      @actor = value
-    end
+    attr_writer :actor
+    private :actor=
 
     private def terminating?
       @terminating
