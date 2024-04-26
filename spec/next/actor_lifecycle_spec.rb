@@ -143,16 +143,16 @@ RSpec.describe Next::Actor, :actor_system do
         end
       end
 
-      def object_id
+      def object_identifier
         expect_message { |message| /Hello from #pre_start/.match?(message) }.split("object_id=").last
       end
 
       it "executes #pre_start hook" do
-        object_id_before_recreate = object_id
+        object_id_before_recreate = object_identifier
 
         actor << Next::SystemMessages::Recreate.new(StandardError.new)
 
-        expect(object_id).not_to eq(object_id_before_recreate), "should instantiate a new actor"
+        expect(object_identifier).not_to eq(object_id_before_recreate), "should instantiate a new actor"
 
         expect_no_message(timeout: 0.5)
       end

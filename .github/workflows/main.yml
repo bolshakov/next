@@ -12,22 +12,19 @@ env:
 
 jobs:
   RSpec:
+    name: RSpec
     runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
-    strategy:
-      matrix:
-        ruby:
-          - $RUBY_VERSION
 
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby }}
+        ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
+
     - name: Run the default task
-      run: bundle exec rake
+      run: bundle exec rspec
 
   Lint:
     name: Lint 🔎
@@ -35,18 +32,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: $RUBY_VERSION
-
-      - name: Install dependencies
-        run: bundle install
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
 
       - name: Run
-        run: rake standard
+        run: bundle exec rake standard
 
   TypeCheck:
     name: Type Check🩺
@@ -54,15 +49,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: $RUBY_VERSION
-
-      - name: Install dependencies
-        run: bundle install
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
 
       - name: Run
-        run: steep check --severity-level=error
+        run: bundle exec steep check --severity-level=error
