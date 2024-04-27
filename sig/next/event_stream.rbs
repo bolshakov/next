@@ -1,0 +1,11 @@
+module Next
+  class EventStream
+    attr_reader event_bus: Reference
+
+    def initialize: (event_bus: Reference) -> void
+
+    def publish: (untyped) -> self
+
+    def subscribe: (Reference, untyped) -> self
+  end
+end

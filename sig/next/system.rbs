@@ -6,6 +6,7 @@ module Next
 
     def self.terminate_all!: -> void
 
+    attr_reader event_stream: EventStream
     attr_reader name: String
     attr_reader root: Reference
     attr_reader user_root: Reference
@@ -25,6 +26,7 @@ module Next
     private
 
     def start_actor_system: -> void
+    def start_event_stream: -> void
     def start_root: -> void
     def start_user_root: -> void
   end

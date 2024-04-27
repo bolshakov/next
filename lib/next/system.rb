@@ -12,6 +12,8 @@ module Next
     attr_reader :user_root
     private :user_root
 
+    attr_reader :event_stream
+
     class << self
       # Gracefully terminates all known actor systems
       def terminate_all!
@@ -26,6 +28,7 @@ module Next
       @name = name
 
       start_actor_system
+      start_event_stream
       when_terminated.each { puts "\nActor System `#{name}` has been terminated." }
 
       freeze
@@ -81,6 +84,13 @@ module Next
       @user_root = Reference.new(USER_ROOT_PROPS, name: "user", parent: @root, system: self)
 
       root << SystemMessages::Supervise.new(user_root)
+    end
+
+    private def start_event_stream
+      event_bus = Reference.new(EventBus.props, name: "event_stream", parent: @root, system: self)
+      root << SystemMessages::Supervise.new(event_bus)
+
+      @event_stream = EventStream.new(event_bus:)
     end
   end
 end
