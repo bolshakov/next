@@ -245,6 +245,52 @@ Signal.trap("INT") {
 This signal handler ensures that all actor systems are terminated when the user presses Ctrl+C or sends an 
 interrupt signal to the application.
 
+### Event Stream 
+
+Each Actor System has its own Event Stream, it enables actors to communicate through a central
+event bus. Using Event Stream, actors can both publish and subscribe to certain messages from
+the bus.
+
+While the `EventStream` primarily is meant to cater to the internal requirements of the `Next` framework, 
+it can also be used by end users for their specific needs. The main entry point for interacting with 
+`EventStream` is through `system.event_stream` which can be accessed from inside an actor 
+using `context.system.event_stream`.
+
+EventStream provides a subscribe method to listen to specific events. The method takes two 
+parameters: the `subscriber` (which should be an actor `Reference`) and the type of event 
+to be listened.
+
+```ruby 
+system.event_stream.subscribe(subscriber, Numeric)
+```
+
+To publish an event, you use the publish method of the Event Stream:
+
+```ruby
+system.event_stream.publish(42)
+system.event_stream.publish(42.2)
+```
+
+The event are matched with subscriptions using the `#===` method. Which means that in 
+the above example, `subscriber` receives both events (`42` and `42.2`). Indeed:
+
+```ruby
+Numeric === 42 #=> true 
+Numeric === 42.2 #=> true 
+```
+
+However, if you subscribe to a `Float` instead of `Numeric`, subscriber receives only the 
+second event:
+
+```ruby 
+system.event_stream.subscribe(subscriber, Float)
+system.event_stream.publish(42)
+system.event_stream.publish(42.2)
+
+expect_message(42.2)
+expect_no_message(42)
+```
+
 ### Testing
 
 `Next` comes with RSpec support. To activate it, include `rext/testing/rspec` and use the `:actor_system` shared context.

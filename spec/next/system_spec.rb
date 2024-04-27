@@ -40,7 +40,31 @@ RSpec.describe Next::System, :actor_system do
 
       system.actor_of(EchoActor.props, "echo2").tell "sent after termination"
 
-      expect_no_message
+      expect_no_message(timeout: 0.1)
+    end
+  end
+
+  describe "event_stream" do
+    let(:event_stream) { system.event_stream }
+
+    it "subscribes to events" do
+      event_stream.subscribe(test_actor, Numeric)
+
+      event_stream.publish(42)
+      expect_message(42)
+
+      event_stream.publish(42.2)
+      expect_message(42.2)
+    end
+
+    context "when subscriber is not a reference" do
+      let(:invalid_subscriber) { double }
+
+      it "raises an ArgumentError" do
+        expect {
+          event_stream.subscribe(invalid_subscriber, 42)
+        }.to raise_error ArgumentError, "subscriber should be type of Reference"
+      end
     end
   end
 end
