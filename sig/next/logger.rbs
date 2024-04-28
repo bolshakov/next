@@ -1,0 +1,11 @@
+module Next
+  class Logger < Actor
+    def self.props: [T < Logger ](logger: T) -> Props[Logger]
+
+    attr_reader logger: ::Logger
+
+    def initialize: (logger: ::Logger) -> void
+
+    def receive: (LogEvent) -> void
+  end
+end

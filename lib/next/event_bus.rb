@@ -13,6 +13,8 @@ module Next
   # In the above example, only +actor_ref2+ receives the +42.2+ message. However, if you publish +424+
   # it will be received by both actors.
   #
+  # TODO: unsubscribe terminated actors
+  #
   # @api private
   class EventBus < Actor
     attr_reader :subscriptions

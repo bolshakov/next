@@ -11,6 +11,7 @@ target :lib do
   library "delegate"              # Standard libraries
   library "securerandom"          # Standard libraries
   library "timeout"
+  library "logger"
 
   ignore "lib/next/testing/rspec.rb"
   ignore "lib/next/testing/expectations.rb"

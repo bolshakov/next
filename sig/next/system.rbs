@@ -1,5 +1,12 @@
 module Next
   class System
+    interface _Config
+      def logger: -> Logger
+    end
+
+    include Dry::Configurable
+    extend Dry::Configurable::_Settings
+
     TERMINATION_AWAIT_TIMEOUT: Numeric
     ROOT_PROPS: Props[Root]
     USER_ROOT_PROPS: Props[UserRoot]
@@ -7,15 +14,21 @@ module Next
     def self.terminate_all!: -> void
 
     attr_reader event_stream: EventStream
+    attr_reader log: Logging::Log
     attr_reader name: String
     attr_reader root: Reference
     attr_reader user_root: Reference
 
-    def initialize: (String) -> void
+    def initialize: (String) { () [self: Dry::Configurable::_Settings] -> void } -> void
+
+    def config: -> _Config
+
+    def __log__: -> Logging::Log
 
     def actor_of: [T < Actor] (Props[T], ?String) -> Reference
 
     def await_termination: -> Fear::Try[Terminated]
+
 
     def terminate: -> Fear::Future[Terminated]
 
@@ -25,6 +38,7 @@ module Next
 
     private
 
+    def initialize_logging: -> void
     def start_actor_system: -> void
     def start_event_stream: -> void
     def start_root: -> void

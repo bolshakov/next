@@ -3,7 +3,12 @@
 module Next
   # Root is the parent of all the actors defined by a user.
   class UserRoot < Actor
+    # include Logging
     CreateActor = Data.define(:props, :name, :promise)
+
+    # def initialize
+    #   log.info("Actor System `%s` started.", context.system.name)
+    # end
 
     def receive(message)
       case message

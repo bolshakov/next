@@ -245,6 +245,55 @@ Signal.trap("INT") {
 This signal handler ensures that all actor systems are terminated when the user presses Ctrl+C or sends an 
 interrupt signal to the application.
 
+### Logging
+
+In the Next framework, you can perform logging from within your actors by including `Next::Logging` 
+module and using the log method.
+
+```ruby 
+class MyActor < Next::Actor
+  include Next::Logging
+
+  def receive(message)
+    log.info("#{message} received")
+  end
+end
+```
+
+There are multiple log levels available for usage:
+
+* log.info("message") - for informational messages
+* log.debug("message") - for debug-level messages
+* log.warn("message") - for warnings
+* log.error("message") - for error messages
+
+Optionally, the name of the program can be passed:
+
+```ruby 
+log.info("message", "my actor")
+```
+
+The logging in the Next framework is asynchronous implying the following:
+* **Performant**: the logging doesn't block IO operations and therefore doesn't 
+  halt the execution of your actors.
+* **Temporal mismatch**: The timestamp of logs may not always correspond to the time 
+  the logs were generated due to the asynchronous nature.
+* **Potential for lost data**: In case of actor system termination, there might be unwritten 
+  logs in memory which could get lost.
+
+
+To configure a logger (by default `$stdout` is used) you can pass an option configuration 
+block to the `Next.system` method:
+
+```ruby 
+system = Next.system('my_system') do |config|
+  config.logger = Logger.new('/path/to/your/logfile.log')
+end
+```
+
+Under the hood, `Next` uses `Next::System#event_stream` to collect logs. See the following section 
+to learn more about Event Stream.
+  
 ### Event Stream 
 
 Each Actor System has its own Event Stream, it enables actors to communicate through a central

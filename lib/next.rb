@@ -17,7 +17,7 @@ module Next
       Concurrent.global_io_executor
     end
 
-    def system(name) = System.new(name)
+    def system(name, &configuration) = System.new(name, &configuration)
   end
 end
 

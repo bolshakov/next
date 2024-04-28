@@ -1,5 +1,7 @@
 module Next
   class UserRoot < Actor
+    include Logging
+
     class CreateActor < Data
       attr_reader props: Props[Actor]
       attr_reader name: String
@@ -7,5 +9,11 @@ module Next
 
       def self.new: [T < Actor] (props: Props[T], name: String, promise: Fear::Promise[Reference]) -> instance
     end
+
+    def initialize: -> void
+
+    private
+
+    def create_actor: (props: Props[untyped], name: String, promise: Fear::Promise[Reference]) -> void
   end
 end

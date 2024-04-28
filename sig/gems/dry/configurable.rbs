@@ -1,0 +1,14 @@
+module Dry
+  module Configurable
+    def configure: { () [self: _Settings] -> void } -> self
+
+    interface _Settings
+      def setting: (
+          Symbol name,
+          ?reader: bool,
+          ?default: untyped,
+          ?constructor: ^(untyped) -> untyped
+        ) ?{ () [self: _Settings] -> void } -> void
+    end
+  end
+end
