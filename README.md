@@ -68,8 +68,6 @@ Please note that you need to explicitly handle all the incoming messages; otherw
 `Next::Actor#receive` is considered an actor's "initial behavior". See [Become/Unbecome][] for further information on 
 changing the behavior of an actor after its construction.
 
-#### Props
-
 `Next::Props` represents the configuration of actors. They are immutable and may be freely shared between actors.
 
 ```ruby
@@ -77,11 +75,8 @@ props1 = Next.props(MyActor)
 props2 = Next.props(Counter, initial: 42)
 ```
 
-Actors (and thus, their props) allow only keyword arguments. The last example shows how to pass `initial: 42` to the actor's initializer.
-
-##### Creating Actors with Props
-
-Actors are created by passing an instance of `Props` into the `System#actor_of` method.
+Actors (and thus, their props) allow only keyword arguments. The last example shows how to pass `initial: 42` to 
+the actor's initializer. Actors are created by passing an instance of `Props` into the `System#actor_of` method.
 
 ```ruby
 counter_props = Next.props(Counter, initial: 42)
@@ -227,7 +222,7 @@ actor_system = Next.system("example")
 actor_system.await_termination
 ```
 
-## Handling Interrupt Signals
+#### Handling Interrupt Signals
 
 When the application is terminated, Next can handle graceful shutdown by default. However, if a user wants to 
 **override** this signal handler, they need to call the `Next::System#terminate_all!` method manually. This method ensures 
