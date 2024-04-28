@@ -1,0 +1,26 @@
+module Next
+  module Logging
+    # This is the main interface for logging. It performs asynchronous logging
+    # using a Event Stream.
+    #
+    class Log
+      attr_reader event_stream: EventStream
+
+      def initialize: (System) -> void
+
+      def info: (untyped, ?String?) -> void
+
+      def debug: (untyped, ?String?) -> void
+
+      def warn: (untyped, ?String?) -> void
+
+      def error: (untyped, ?String?) -> void
+
+      def fatal: (untyped, ?String?) -> void
+
+      private
+
+      def publish: (Logger::LogEvent) -> self
+    end
+  end
+end

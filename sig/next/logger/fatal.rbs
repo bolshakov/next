@@ -1,0 +1,8 @@
+module Next
+  class Logger < Actor
+    class Fatal < LogEvent
+      def self.new: (message: untyped, ?progname: String?) -> instance
+      def initialize: (message: untyped, ?progname: String?) -> void
+    end
+  end
+end

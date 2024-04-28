@@ -1,0 +1,5 @@
+module Next
+  module Logging
+    def log: -> Log
+  end
+end

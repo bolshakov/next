@@ -44,7 +44,7 @@ RSpec.describe Next::System, :actor_system do
     end
   end
 
-  describe "event_stream" do
+  describe "#event_stream" do
     let(:event_stream) { system.event_stream }
 
     it "subscribes to events" do
@@ -64,6 +64,30 @@ RSpec.describe Next::System, :actor_system do
         expect {
           event_stream.subscribe(invalid_subscriber, 42)
         }.to raise_error ArgumentError, "subscriber should be type of Reference"
+      end
+    end
+  end
+
+  describe "#log" do
+    let(:system) do
+      l = logio
+      Next.system("test") do |config|
+        config.logger = Logger.new(l)
+      end
+    end
+    let(:logio) { StringIO.new }
+    let(:log) { system.log }
+    let(:event_stream) { system.event_stream }
+
+    let(:subscriber) { system.actor_of(ActorWithInspector.props(inspector: test_actor)) }
+
+    it "receives log events" do
+      event_stream.subscribe(subscriber, Next::Logger::LogEvent)
+
+      log.info("Log event", "specs")
+
+      await_condition do
+        logio.string.include?("specs: Log event")
       end
     end
   end

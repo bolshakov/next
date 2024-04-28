@@ -132,6 +132,16 @@ module Next
       end
     end
 
+    # Main asynchronous logging interface
+    #
+    # @example
+    #   log.info("message", "progname")
+    #   log.info("message")
+    #
+    def log
+      system.log
+    end
+
     # Unregister child
     private def add_child(child)
       @children[child.name] = child

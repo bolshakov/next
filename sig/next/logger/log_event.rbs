@@ -1,0 +1,11 @@
+module Next
+  class Logger < Actor
+    class LogEvent < Data
+      attr_reader progname: String?
+      attr_reader message: untyped
+      attr_reader level: Numeric
+
+      def initialize: (?progname: String?, message: untyped, level: Numeric) -> void
+    end
+  end
+end

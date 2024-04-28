@@ -26,10 +26,10 @@ module Next
       self
     end
 
-    def post(*, &task)
+    def post(envelope, &task)
       Kernel.raise ArgumentError.new("no block given") unless task
       return false unless running?
-      @serializer.post(@executor, *, &task)
+      @serializer.post(@executor, envelope, &task)
     end
   end
 end

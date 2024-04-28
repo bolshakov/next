@@ -1,7 +1,14 @@
 # frozen_string_literal: true
 
+require "dry-configurable"
+require "logger"
+
 module Next
   class System
+    include Dry::Configurable
+
+    setting :logger, default: -> { ::Logger.new($stdout) }
+
     attr_reader :name
     ROOT_PROPS = Next.props(Root)
     USER_ROOT_PROPS = Next.props(UserRoot)
@@ -14,6 +21,8 @@ module Next
 
     attr_reader :event_stream
 
+    attr_reader :log
+
     class << self
       # Gracefully terminates all known actor systems
       def terminate_all!
@@ -24,11 +33,13 @@ module Next
       end
     end
 
-    def initialize(name)
+    def initialize(name, &configuration)
       @name = name
+      configure(&configuration)
 
       start_actor_system
       start_event_stream
+      initialize_logging
       when_terminated.each { puts "\nActor System `#{name}` has been terminated." }
 
       freeze
@@ -81,16 +92,23 @@ module Next
 
     # Starts the root actor of all the user actors in the system
     private def start_user_root
-      @user_root = Reference.new(USER_ROOT_PROPS, name: "user", parent: @root, system: self)
+      @user_root = Reference.new(USER_ROOT_PROPS, name: "user", parent: root, system: self)
 
       root << SystemMessages::Supervise.new(user_root)
     end
 
     private def start_event_stream
-      event_bus = Reference.new(EventBus.props, name: "event_stream", parent: @root, system: self)
+      event_bus = Reference.new(EventBus.props, name: "event_stream", parent: root, system: self)
       root << SystemMessages::Supervise.new(event_bus)
 
       @event_stream = EventStream.new(event_bus:)
+    end
+
+    private def initialize_logging
+      logger = Reference.new(Logger.props(logger: config.logger), name: "logger", parent: root, system: self)
+      root << SystemMessages::Supervise.new(logger)
+      @log = Logging::Log.new(self)
+      event_stream.subscribe(logger, Logger::LogEvent)
     end
   end
 end

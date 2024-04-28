@@ -1,5 +1,7 @@
 module Fear
   class Promise[T]
     def to_future: -> Future[T]
+    def success!: (T) -> self
+    def failure!: (StandardError) -> self
   end
 end

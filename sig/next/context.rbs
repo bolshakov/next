@@ -22,6 +22,8 @@ module Next
 
     def become: (Symbol) -> void
 
+    def log: -> Logging::Log
+
     def sender: -> Reference
 
     private
