@@ -1,0 +1,19 @@
+module Next
+  module Testing
+    module Matchers
+      class ExpectAllMessages < Base
+        attr_reader actual_messages: Array[untyped]
+        attr_reader expected_messages: Array[untyped]
+        attr_reader matcher: untyped
+
+        attr_reader timeout: Numeric
+
+        def initialize: (Array[untyped], timeout: Numeric) -> void
+
+        def failure_message: -> String
+
+        def matches?: (jailbreak: Concurrent::Channel) -> bool
+      end
+    end
+  end
+end

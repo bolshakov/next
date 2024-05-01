@@ -9,8 +9,8 @@ RSpec.describe Next::EventBus, :actor_system do
 
   context "when subscribed to the same event twice" do
     before do
-      event_bus.tell subscribe(event: Numeric, subscriber: test_actor)
-      event_bus.tell subscribe(event: Numeric, subscriber: test_actor)
+      event_bus.tell subscribe(event: Numeric, subscriber: test_probe)
+      event_bus.tell subscribe(event: Numeric, subscriber: test_probe)
     end
 
     it "does not receive the same event twice" do
@@ -23,7 +23,7 @@ RSpec.describe Next::EventBus, :actor_system do
 
   context "when subscribed a superclass of an event" do
     before do
-      event_bus.tell subscribe(event: Numeric, subscriber: test_actor)
+      event_bus.tell subscribe(event: Numeric, subscriber: test_probe)
     end
 
     it "receives matching event" do
@@ -35,8 +35,8 @@ RSpec.describe Next::EventBus, :actor_system do
 
   context "when subscribed a superclass of an event and to event itself" do
     before do
-      event_bus.tell subscribe(event: Numeric, subscriber: test_actor)
-      event_bus.tell subscribe(event: Float, subscriber: test_actor)
+      event_bus.tell subscribe(event: Numeric, subscriber: test_probe)
+      event_bus.tell subscribe(event: Float, subscriber: test_probe)
     end
 
     it "does not receive the same event twice" do
@@ -49,7 +49,7 @@ RSpec.describe Next::EventBus, :actor_system do
 
   context "when subscribed a subclass of an event" do
     before do
-      event_bus.tell subscribe(event: Float, subscriber: test_actor)
+      event_bus.tell subscribe(event: Float, subscriber: test_probe)
     end
 
     it "does not receive an event" do
@@ -60,8 +60,8 @@ RSpec.describe Next::EventBus, :actor_system do
   end
 
   context "when two different subscribers subscribed to the same event" do
-    let(:subscriber1) { system.actor_of(ActorWithInspector.props(inspector: test_actor)) }
-    let(:subscriber2) { system.actor_of(ActorWithInspector.props(inspector: test_actor)) }
+    let(:subscriber1) { system.actor_of(ActorWithInspector.props(inspector: test_probe)) }
+    let(:subscriber2) { system.actor_of(ActorWithInspector.props(inspector: test_probe)) }
 
     before do
       event_bus.tell subscribe(event: Numeric, subscriber: subscriber1)

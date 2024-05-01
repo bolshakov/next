@@ -2,7 +2,7 @@
 
 require "support/supervision"
 
-RSpec.describe Next::OneForOneStrategy, :actor_system do
+RSpec.describe Next::OneForOneStrategy do
   let(:supervisor_strategy) do
     described_class.new do |error|
       case error

@@ -2,6 +2,8 @@ module Fear
   interface _Option[Elem]
     def each: [T] { (T) -> void } -> void
     def get_or_else: [T] { -> T } -> (Elem | T)
+                   | [T] (T) -> (Elem | T)
+    def map: [T] { (Elem) -> T } -> _Option[T]
     def present?: -> bool
     def tap: () { (_Option[Elem]) -> void } -> _Option[Elem]
   end

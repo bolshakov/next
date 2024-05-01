@@ -23,9 +23,7 @@ module Next
 
     def config: -> _Config
 
-    def __log__: -> Logging::Log
-
-    def actor_of: [T < Actor] (Props[T], ?String) -> Reference
+    def actor_of: [T < Actor] (Props[T], ?String, ?timeout: Numeric) -> Reference
 
     def await_termination: -> Fear::Try[Terminated]
 

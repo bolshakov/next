@@ -1,0 +1,29 @@
+module Next
+  module Testing
+    module Matchers
+      class ExpectMessage < Base
+        attr_reader actual_message: Fear::Option[untyped]
+        attr_reader expected_message: Fear::Option[untyped]
+        attr_reader timeout: Numeric
+
+        def initialize: (Fear::Option[untyped], timeout: Numeric) -> void
+
+        def does_not_match?: (jailbreak: Concurrent::Channel) -> bool
+
+        def failure_message: -> String
+
+        def failure_message_when_negated: -> String
+
+        def matches?: (jailbreak: Concurrent::Channel) -> bool
+
+        private
+
+        def formatted_actual: -> String
+
+        def formatted_expected: -> String
+
+        def message: (String) -> String
+      end
+    end
+  end
+end

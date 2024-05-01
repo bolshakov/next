@@ -33,8 +33,6 @@ RSpec.describe Next::System, :actor_system do
   end
 
   describe "#terminate" do
-    let(:echo) { system.actor_of(EchoActor.props, "echo1") }
-
     it "does not create actors after termination" do
       system.terminate
 
@@ -48,7 +46,7 @@ RSpec.describe Next::System, :actor_system do
     let(:event_stream) { system.event_stream }
 
     it "subscribes to events" do
-      event_stream.subscribe(test_actor, Numeric)
+      event_stream.subscribe(test_probe, Numeric)
 
       event_stream.publish(42)
       expect_message(42)
@@ -79,7 +77,7 @@ RSpec.describe Next::System, :actor_system do
     let(:log) { system.log }
     let(:event_stream) { system.event_stream }
 
-    let(:subscriber) { system.actor_of(ActorWithInspector.props(inspector: test_actor)) }
+    let(:subscriber) { system.actor_of(ActorWithInspector.props(inspector: test_probe)) }
 
     it "receives log events" do
       event_stream.subscribe(subscriber, Next::Logger::LogEvent)
