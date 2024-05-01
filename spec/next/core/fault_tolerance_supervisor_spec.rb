@@ -40,7 +40,7 @@ RSpec.describe Next::Core::FaultTolerance, :actor_system do
   # The sole purpose of this actor is to test escalation path of the +supervisor+
   let(:supervisors_supervisor) { system.actor_of(supervisors_supervisor_props, "supervisor's supervisor") }
   let(:supervisors_supervisor_props) { SupervisionTestingActor.props(spying_supervisor_strategy) }
-  let(:spying_supervisor_strategy) { spying_supervisor_strategy_class.new(test_actor) }
+  let(:spying_supervisor_strategy) { spying_supervisor_strategy_class.new(test_probe) }
 
   context "when SystemMessages::Failed received" do
     let(:error) { NoMethodError.new(error_message) }
@@ -66,10 +66,13 @@ RSpec.describe Next::Core::FaultTolerance, :actor_system do
         it "escalates failure to its supervisor" do
           supervisor.tell Next::SystemMessages::Failed.new(child: supervised, cause: error)
 
-          expect_message(timeout: 1) do |message|
-            expect(message.fetch(0)).to eq(supervisor)
-            expect(message.fetch(1)).to be_kind_of(NoMethodError).and have_attributes(message: error_message)
-          end
+          expect_message(
+            [
+              be(supervisor),
+              be_kind_of(NoMethodError).and(have_attributes(message: error_message))
+            ],
+            timeout: 1
+          )
         end
       end
     end

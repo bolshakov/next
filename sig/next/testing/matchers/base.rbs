@@ -1,0 +1,17 @@
+module Next
+  module Testing
+    module Matchers
+      class Base
+        DEFAULT_TIMEOUT: Numeric
+
+        private
+
+        def fuzzy_matched?: (untyped, untyped) -> bool
+
+        def receive_one: (jailbreak: Concurrent::Channel, timeout: Numeric) -> Fear::_Option[untyped]
+
+        def receive_many: (Integer, jailbreak: Concurrent::Channel, timeout: Numeric) -> Array[untyped]
+      end
+    end
+  end
+end

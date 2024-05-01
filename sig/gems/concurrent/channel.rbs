@@ -3,5 +3,6 @@ module Concurrent
     def self?.go: { -> void } -> void
     def <<: (untyped) -> bool
     def take: -> untyped
+    def stop: -> void
   end
 end

@@ -144,7 +144,7 @@ RSpec.describe Next::Actor, :actor_system do
       end
 
       def object_identifier
-        expect_message { |message| /Hello from #pre_start/.match?(message) }.split("object_id=").last
+        expect_message(/Hello from #pre_start/).split("object_id=").last
       end
 
       it "executes #pre_start hook" do

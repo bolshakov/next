@@ -3,24 +3,21 @@
 require "timeout"
 
 RSpec.shared_context :actor_testing, :actor_system do
-  # include Next::Actor::Testing
   include Next::Testing::Expectations
 
-  let(:jailbreak) { Next::Testing::TestActor.jailbreak }
   let(:system) { Next.system("test-system") }
-  let(:test_actor) do
-    props = Next::Testing::TestActor.props(jailbreak:)
-    system.actor_of(props, "TestActor-" + SecureRandom.uuid)
-  end
+  let(:test_probe_props) { Next::Testing::TestActor.props(jailbreak: test_probe_jailbreak) }
+  let(:test_probe_jailbreak) { Next::Testing::TestActor.jailbreak }
+  let(:test_probe) { system.actor_of(test_probe_props, "test-actor-" + SecureRandom.uuid) }
 
   around do |example|
-    Next::LocalStorage.with_current_identity(test_actor) do
+    Next::LocalStorage.with_current_identity(test_probe) do
       example.run
     end
   end
 
   after do
-    jailbreak.stop
+    test_probe_jailbreak.stop
     system.terminate
     system.await_termination
   end

@@ -1,0 +1,37 @@
+module Next
+  module Testing
+    module Matchers
+      class ReceiveMessage < Base
+        UndefinedValue: Object
+
+        attr_reader actual_message: untyped
+        attr_reader expected_message: untyped
+        attr_reader system: System
+        attr_reader timeout: Numeric
+
+        def initialize: (untyped, system: System, timeout: Numeric) -> void
+
+        def compare_expected_with_actual: (untyped) -> bool
+
+        def does_not_match?: (^() -> void) -> bool
+
+        def failure_message: -> String
+
+        def failure_message_when_negated: -> String
+
+        def matches?: (^() -> void) -> bool
+
+        def supports_block_expectations?: -> bool
+
+        private
+
+        def formatted_actual: -> String
+
+        def formatted_expected: -> String
+
+        def message: (String) -> String
+
+      end
+    end
+  end
+end

@@ -346,7 +346,7 @@ RSpec.describe MyActor, :actor_system do
 end 
 ```
 
-Under the hood, we run `test_actor` that logs all the received messages. There is a set of matchers for inspecting those messages.
+Under the hood, we run `test_probe` actor that logs all the received messages. There is a set of matchers for inspecting those messages.
 
 ```ruby
 class EchoActor < Next::Actor
@@ -371,7 +371,7 @@ end
 The `expect_message` matcher expects exactly the given message.
 
 ```ruby 
-test_actor.tell "How are you?"
+test_probe.tell "How are you?"
 
 expect_message("How are you?") # passes
 expect_message("Bye") # fails
@@ -380,7 +380,7 @@ expect_message("Bye") # fails
 It's worth mentioning that you can use RSpec matchers for your expectations:
 
 ```ruby 
-test_actor.tell "How are you?"
+test_probe.tell "How are you?"
 
 expect_message(be_kind_of(String)) # passes
 expect_message(be_kind_of(Integer)) # fails
@@ -389,14 +389,14 @@ expect_message(be_kind_of(Integer)) # fails
 Use `expect_no_message` to expect no message within the default timeout of 3 seconds:
 
  ```ruby 
-test_actor.tell "How are you?"
+test_probe.tell "How are you?"
 
 expect_no_message("Bye") # passes
 
 Thread.new do 
-  test_actor.tell "How are you?"
+  test_probe.tell "How are you?"
   sleep 0.1
-  test_actor.tell "Bye"
+  test_probe.tell "Bye"
 end
 
 expect_no_message("Bye", timeout: 0.3) # fails with 'received unexpected message "Hi! How are you?" after 102 millis'

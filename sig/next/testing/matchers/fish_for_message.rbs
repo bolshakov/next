@@ -1,0 +1,24 @@
+module Next
+  module Testing
+    module Matchers
+      class FishForMessage
+        attr_reader actual_message: untyped
+        attr_reader actual_messages: Array[untyped]
+        attr_reader expected_message: untyped
+        attr_reader timeout: Numeric
+
+        def initialize: (untyped, timeout: Numeric) -> void
+
+        def failure_message: -> String
+
+        def matches?: (jailbreak: Concurrent::Channel) -> bool
+
+        private
+
+        def formatted_actual: -> String
+
+        def formatted_expected: -> String
+      end
+    end
+  end
+end

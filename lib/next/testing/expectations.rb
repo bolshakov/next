@@ -4,76 +4,73 @@ module Next
   module Testing
     module Expectations
       DEFAULT_TIMEOUT = 3
+
       # Expects the given message to be received in a given timeout
       #
-      # @param expected [any]
-      # @param timeout [Integer]
-      # @return [any] received messages
-      def expect_message(expected = Fear::Utils::UNDEFINED, timeout: DEFAULT_TIMEOUT, &)
-        case receive_one(timeout: timeout)
-        in Fear::None
+      # @param expected_message [any]
+      # @param timeout [Numeric]
+      # @return [any] received message
+      def expect_message(expected_message, timeout: DEFAULT_TIMEOUT)
+        matcher = Matchers::ExpectMessage.new(Fear.some(expected_message), timeout:)
+
+        if matcher.matches?(jailbreak: test_probe_jailbreak)
+          matcher.actual_message.get
+        else
           raise ::RSpec::Expectations::ExpectationNotMetError,
-            "timeout (#{timeout}) during expect_message while waiting for #{expected.inspect}",
+            matcher.failure_message,
             caller(1)
-        in Fear::Some(received)
-          expect_match(expected, received, &)
-
-          received.message
         end
       end
 
-      def expect_no_message(expected = Fear::Utils::UNDEFINED, timeout: DEFAULT_TIMEOUT, interval: 0.025)
-        started_at = Time.now
-        wait_till = started_at + timeout
-        time_lapsed = -> { Integer((Time.now - started_at) * 1_000) }
-
-        loop do
-          case receive_one(timeout: interval)
-          in Fear::None
-            if Time.now > wait_till
-              return nil
-            end
-          in Fear::Some(received)
-            if expected == Fear::Utils::UNDEFINED
-              raise ::RSpec::Expectations::ExpectationNotMetError,
-                "expected no message, received unexpected message #{received.message.inspect} from #{received.sender.name} after #{time_lapsed.call} millis",
-                caller(1)
-            else
-              expect_not_match(expected, received,
-                "received unexpected message #{received.message.inspect} from #{received.sender.name} after #{time_lapsed.call} millis")
-            end
-          end
-        end
-      end
-
-      # Wait for a message matching +expected+ or a block
+      # Expects no messages to be received in a given timeout
       #
-      def fish_for_message(expected = Fear::Utils::UNDEFINED, timeout: DEFAULT_TIMEOUT, &block)
-        stop = Time.now + timeout
-        received_messages = []
+      # @param timeout [Numeric]
+      def expect_no_message(timeout: DEFAULT_TIMEOUT)
+        matcher = Matchers::ExpectMessage.new(Fear.none, timeout:)
 
-        loop do
-          remaining_timeout = stop - Time.now
-          case receive_one(timeout: remaining_timeout)
-          in Fear::None
-            raise ::RSpec::Expectations::ExpectationNotMetError, <<~ERROR, caller(1)
-              timeout (#{timeout}) during fish_for_message while fishing for `#{expected.inspect}`.
-              Received messages:
-              #{received_messages.map { "  * #{_1}" }.join("\n")}
-            ERROR
-          in Fear::Some(received)
-            begin
-              expect_match(expected, received, &block)
-            rescue ::RSpec::Expectations::ExpectationNotMetError
-              received_messages << received.message
-              next
-            else
-              return received.message
-            end
-          end
+        if matcher.matches?(jailbreak: test_probe_jailbreak)
+          raise ::RSpec::Expectations::ExpectationNotMetError,
+            matcher.failure_message_when_negated,
+            caller(1)
         end
       end
 
+      # Expect all messages to be received within a given timeout. The order of messages does not matter
+      #
+      # @param expected_messages [Array]
+      # @param timeout [Numeric]
+      # @return [Array] captured messages
+      def expect_all_messages(*expected_messages, timeout: DEFAULT_TIMEOUT)
+        matcher = Matchers::ExpectAllMessages.new(expected_messages, timeout: timeout)
+
+        if matcher.matches?(jailbreak: test_probe_jailbreak)
+          matcher.actual_messages
+        else
+          raise ::RSpec::Expectations::ExpectationNotMetError,
+            matcher.failure_message,
+            caller(1)
+        end
+      end
+
+      # Waits for a specific message from the test_probe, ensuring that the expected message is
+      # received within a given timeout period (3 seconds by default).
+      #
+      # @param expected_message [any]
+      # @param timeout [Numeric]
+      # @return [any] received message
+      def fish_for_message(expected_message, timeout: DEFAULT_TIMEOUT)
+        matcher = Matchers::FishForMessage.new(expected_message, timeout:)
+
+        if matcher.matches?(jailbreak: test_probe_jailbreak)
+          matcher.actual_message
+        else
+          raise ::RSpec::Expectations::ExpectationNotMetError,
+            matcher.failure_message,
+            caller(1)
+        end
+      end
+
+      # Waits until a condition is met within a given timeout period.
       def await_condition(timeout: DEFAULT_TIMEOUT, interval: 0.01, message: "condition is not met")
         wail_till = Time.now + timeout
 
@@ -94,80 +91,6 @@ module Next
           raise ::RSpec::Expectations::ExpectationNotMetError,
             "timout (#{timeout}) expired: #{message}",
             caller(1)
-        end
-      end
-
-      # Expects all of the given messages to be received in a given timeout
-      #
-      def expect_all_messages(*expected, timeout: DEFAULT_TIMEOUT) # rubocop: disable Metrics/AbcSize
-        received = receive_many(expected.count, max: timeout)
-        missing = expected - received.map(&:message)
-        unexpected = received.reject { |envelope| expected.include?(envelope.message) }
-
-        unexpected_messages = unexpected
-          .map { |envelope| "#{envelope.message.inspect} from #{envelope.sender.name}" }
-          .join(", ")
-
-        aggregate_failures do
-          expect(missing).to be_empty, "not found: #{missing.map(&:inspect).join(", ")}"
-          expect(unexpected).to be_empty, "found unexpected: #{unexpected_messages}"
-        end
-      end
-
-      # Expects the given message to be received in a given timeout
-      private def receive_one(timeout:)
-        Timeout.timeout(timeout) do
-          Fear.some(jailbreak.take)
-        end
-      rescue Timeout::Error
-        Fear.none
-      end
-
-      private def receive_many(n, max: nil)
-        wail_till = Time.now + max
-        messages = []
-
-        loop do
-          remaining_timout = wail_till - Time.now
-          case receive_one(timeout: remaining_timout)
-          in Fear::None
-            raise StopIteration
-          in Fear::Some(received)
-            messages.push(received)
-            raise StopIteration if messages.size >= n
-          end
-        end
-
-        if messages.size != n
-          raise ::RSpec::Expectations::ExpectationNotMetError,
-            "timout (#{max}) expecting #{n} messages (got #{messages.count})",
-            caller(1)
-        else
-          messages
-        end
-      end
-
-      private def expect_match(expected, actual, message = nil) # rubocop: disable Metrics/AbcSize
-        if expected == Fear::Utils::UNDEFINED && !block_given?
-          raise ArgumentError, "pass either expected values or block"
-        end
-
-        return yield(*actual.deconstruct) if block_given?
-
-        case expected
-        when ::RSpec::Matchers::BuiltIn::BaseMatcher, ::RSpec::Matchers::DSL::Matcher
-          expect(actual.message).to expected, (message || "received unexpected messages #{actual.message.inspect} from #{actual.sender.name} ")
-        else
-          expect(actual.message).to eq(expected), (message || "Expected to receive #{expected.inspect}, but received #{actual.message.inspect} from #{actual.sender.name} ")
-        end
-      end
-
-      private def expect_not_match(expected, actual, message = nil)
-        case expected
-        when ::RSpec::Matchers::BuiltIn::BaseMatcher, ::RSpec::Matchers::DSL::Matcher
-          expect(actual.message).not_to expected, message
-        else
-          expect(actual.message).not_to eq(expected), message
         end
       end
     end

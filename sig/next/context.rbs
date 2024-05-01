@@ -1,7 +1,7 @@
 module Next
   interface _ContextWithChildren
     def child: (String | Symbol)-> Fear::_Option[Reference]
-    def children: ->Set[Reference]
+    def children: -> Set[Reference]
     def stop: (Reference) -> void
   end
 

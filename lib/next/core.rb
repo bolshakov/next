@@ -54,6 +54,7 @@ module Next
               process_message(message)
             end
           rescue => error
+            # puts "err: #{error.detailed_message}"
             handle_processing_error(error)
           end
         end
