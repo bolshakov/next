@@ -63,6 +63,7 @@ module Next
 
       # React on failure during the messages processing.
       private def handle_processing_error(error)
+        log.error(error, identity.name)
         serialized_execution.suspend!
         suspend_children
         parent.tell SystemMessages::Failed.new(child: identity, cause: error)
