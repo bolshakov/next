@@ -3,6 +3,7 @@ module Next
     interface _DebugConfig
       def receive: -> bool
       def autoreceive: -> bool
+      def unhandled: -> bool
     end
 
     interface _Config

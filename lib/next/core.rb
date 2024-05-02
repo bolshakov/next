@@ -54,6 +54,7 @@ module Next
               process_message(message)
             end
           rescue NoMatchingPatternError
+            log_message(message, handled: false) if system.config.debug.unhandled
             # Death letter queue
           rescue => error
             handle_processing_error(error)

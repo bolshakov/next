@@ -99,7 +99,7 @@ RSpec.describe Next::Core, :actor_system do
   end
 
   describe "system.config.debug.receive" do
-    let(:actor_ref) { system.actor_of(actor_class.props, "tttttttt") }
+    let(:actor_ref) { system.actor_of(actor_class.props) }
     let(:actor_class) do
       Class.new(Next::Actor) do
         def self.props = Next.props(self)
@@ -140,6 +140,50 @@ RSpec.describe Next::Core, :actor_system do
         actor_ref.tell "kawabanga"
 
         expect_no_log(/received handled message `"kawabanga"`/, timeout: 0.05)
+      end
+    end
+  end
+
+  describe "system.config.debug.unhandled" do
+    let(:actor_ref) { system.actor_of(actor_class.props) }
+    let(:actor_class) do
+      Class.new(Next::Actor) do
+        def self.props = Next.props(self)
+
+        def receive(message)
+          case message
+          in "kawabanga"
+            # noop
+          end
+        end
+      end
+    end
+
+    context "when enabled" do
+      let(:system) do
+        Next.system("test") do |config|
+          config.debug.unhandled = true
+        end
+      end
+
+      it "logs when received unhandled message" do
+        actor_ref.tell "Hi! How are you?"
+
+        expect_log "received unhandled message `\"Hi! How are you?\"` from '#{test_probe.name}`", level: :debug
+      end
+    end
+
+    context "when disabled" do
+      let(:system) do
+        Next.system("test") do |config|
+          config.debug.unhandled = false
+        end
+      end
+
+      it "does not log when received handled message" do
+        actor_ref.tell "Hi! How are you?"
+
+        expect_no_log(/received unhandled message/, timeout: 0.05)
       end
     end
   end

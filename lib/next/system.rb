@@ -11,6 +11,7 @@ module Next
     setting :debug do
       setting :receive, default: false
       setting :autoreceive, default: false
+      setting :unhandled, default: false
     end
 
     attr_reader :name
