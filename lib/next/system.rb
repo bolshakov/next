@@ -8,10 +8,12 @@ module Next
     include Dry::Configurable
 
     setting :logger, default: ::Logger.new($stdout)
+    setting :stdout_log_level, default: "unknown"
     setting :debug do
       setting :receive, default: false
       setting :autoreceive, default: false
       setting :unhandled, default: false
+      setting :lifecycle, default: false
     end
 
     attr_reader :name
@@ -49,6 +51,7 @@ module Next
       #
       # To ensure logging ability during start/shutdown, we log to +$stdout+. Therefore, the logger is
       # protected with a read-write lock.
+      @log_lock = Concurrent::ReadWriteLock.new
       initialize_sync_logging
 
       start_actor_system
@@ -67,7 +70,7 @@ module Next
 
     # Gracefully terminates actor system
     def terminate
-      log_lock.with_write_lock { @log = Next::Logging::SyncLog.new }
+      initialize_sync_logging
       root.stop
     end
 
@@ -122,15 +125,23 @@ module Next
     end
 
     private def initialize_sync_logging
-      @log_lock = Concurrent::ReadWriteLock.new
-      log_lock.with_write_lock { @log = Next::Logging::SyncLog.new }
+      log_lock.with_write_lock do
+        @log = if config.stdout_log_level
+          Logging::SyncLog.new(::Logger.new($stdout, level: Logging::SyncLog.level(config.stdout_log_level)))
+        else
+          Logging::SyncLog.new(::Logger.new(nil))
+        end
+      end
     end
 
     private def initialize_async_logging
       logger = Reference.new(Logger.props(logger: config.logger), name: "logger", parent: root, system: self)
       event_stream.subscribe(logger, Logger::LogEvent)
       root << SystemMessages::Supervise.new(logger)
-      log_lock.with_read_lock { @log = Logging::AsyncLog.new(self) }
+
+      log_lock.with_read_lock do
+        @log = Logging::AsyncLog.new(self)
+      end
     end
   end
 end

@@ -4,7 +4,13 @@ module Next
     # using a Event Stream.
     #
     class SyncLog < Log
+      LEVELS: Hash[Symbol, Integer]
+
+      def self.level: (String | Symbol) -> Integer
+
       attr_reader logger: ::Logger
+
+      def initialize: (::Logger) -> void
 
       private
 

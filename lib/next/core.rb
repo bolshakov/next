@@ -53,9 +53,6 @@ module Next
             else
               process_message(message)
             end
-          rescue NoMatchingPatternError
-            log_message(message, handled: false) if system.config.debug.unhandled
-            # Death letter queue
           rescue => error
             handle_processing_error(error)
           end
@@ -91,6 +88,9 @@ module Next
     private def process_message(message)
       actor.public_send(current_behaviour, message)
       log_message(message, handled: true) if system.config.debug.receive
+    rescue NoMatchingPatternError
+      log_message(message, handled: false) if system.config.debug.unhandled
+      # Death letter queue
     end
 
     private def auto_receive_message(message)
@@ -122,8 +122,10 @@ module Next
     end
 
     private def supervise(child)
+      # TODO: what if it's being terminated?
       add_child(child)
       child << SystemMessages::Initialize.new(identity)
+      log.debug("now supervising", identity.name) if system.config.debug.lifecycle
     end
 
     private def initialize_actor(parent)
@@ -137,7 +139,11 @@ module Next
     private def create_actor
       serialized_execution.resume!
       become(Context::DEFAULT_BEHAVIOUR)
-      props.__new_actor__(self)
+      actor = props.__new_actor__(self)
+
+      log.debug("created", identity.name) if system.config.debug.lifecycle
+
+      actor
     end
 
     private def actor

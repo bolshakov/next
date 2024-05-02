@@ -8,7 +8,21 @@ module Next
     class SyncLog < Log
       attr_reader :logger
 
-      def initialize(logger: ::Logger.new($stdout))
+      LEVELS = {
+        info: ::Logger::INFO,
+        debug: ::Logger::DEBUG,
+        warn: ::Logger::WARN,
+        error: ::Logger::ERROR,
+        fatal: ::Logger::FATAL,
+        unknown: ::Logger::UNKNOWN
+      }.freeze
+      private_constant :LEVELS
+
+      def self.level(name) = LEVELS.fetch(name.to_sym) do
+        raise ArgumentError, "log level is not supported #{name}"
+      end
+
+      def initialize(logger)
         @logger = logger
       end
 

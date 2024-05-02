@@ -4,11 +4,13 @@ module Next
       def receive: -> bool
       def autoreceive: -> bool
       def unhandled: -> bool
+      def lifecycle: -> bool
     end
 
     interface _Config
       def logger: -> Logger
       def debug: -> _DebugConfig
+      def stdout_log_level: -> (String | Symbol)
     end
 
     include Dry::Configurable

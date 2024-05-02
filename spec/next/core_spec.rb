@@ -187,4 +187,44 @@ RSpec.describe Next::Core, :actor_system do
       end
     end
   end
+
+  describe "system.config.debug.lifecycle" do
+    let(:actor_ref) { system.actor_of(actor_class.props, "destroyer") }
+    let(:actor_class) do
+      Class.new(Next::Actor) do
+        def self.props = Next.props(self)
+
+        def receive(message)
+        end
+      end
+    end
+
+    context "when enabled" do
+      let(:system) do
+        Next.system("test") do |config|
+          config.debug.lifecycle = true
+        end
+      end
+
+      it "logs" do
+        actor_ref.tell "Hi! How are you?"
+
+        expect_log "created", level: :debug
+      end
+    end
+
+    context "when disabled" do
+      let(:system) do
+        Next.system("test") do |config|
+          config.debug.lifecycle = false
+        end
+      end
+
+      it "does not log" do
+        actor_ref.tell "Hi! How are you?"
+
+        expect_no_log(/created/, timeout: 0.05)
+      end
+    end
+  end
 end

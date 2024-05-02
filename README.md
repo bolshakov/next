@@ -276,7 +276,6 @@ The logging in the Next framework is asynchronous implying the following:
 * **Potential for lost data**: In case of actor system termination, there might be unwritten 
   logs in memory which could get lost.
 
-
 To configure a logger (by default `$stdout` is used) you can pass an option configuration 
 block to the `Next.system` method:
 
@@ -288,6 +287,19 @@ end
 
 Under the hood, `Next` uses `Next::System#event_stream` to collect logs. See the following section 
 to learn more about Event Stream.
+
+During the actor system start and termination, asynchronous logging is not available and `$stoudt` log is used instead. 
+You can configure log level or even turn this logging off with the following configuration option:
+
+
+```ruby 
+system = Next.system('my_system') do |config|
+  # Sets start/termination time logging level to "info"
+  config.stdout_log_level = :info
+  # Turns off this type of logging
+  config.stdout_log_level = nil
+end
+```
   
 #### Logging Options
 
@@ -314,6 +326,14 @@ If you want to log unhandled messages on the debug level, enable this option:
 ```ruby
 system = Next.system("test") do |config|
   config.debug.unhandled = true
+end
+```
+
+If you want to log actors' lifecycle (start, stop, restart, etc.), enable this option:
+
+```ruby
+system = Next.system("test") do |config|
+  config.debug.lifecycle = true
 end
 ```
 
