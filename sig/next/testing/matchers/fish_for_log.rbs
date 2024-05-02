@@ -1,0 +1,20 @@
+module Next
+  module Testing
+    module Matchers
+      class FishForLog < Base
+        LEVELS: Hash[Symbol, Class]
+
+        attr_reader actual_message: Logger::LogEvent
+        attr_reader actual_messages: Array[Logger::LogEvent]
+        attr_reader expected_message: String | StandardError
+        attr_reader human_readable_level: String
+        attr_reader level: Class
+        attr_reader timeout: Numeric
+
+        def initialize: (String, level: Symbol?, timeout: Numeric) -> void
+
+        def matches?: (jailbreak: Concurrent::Channel) -> Logger::LogEvent
+      end
+    end
+  end
+end

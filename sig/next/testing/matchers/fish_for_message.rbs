@@ -1,7 +1,7 @@
 module Next
   module Testing
     module Matchers
-      class FishForMessage
+      class FishForMessage < Base
         attr_reader actual_message: untyped
         attr_reader actual_messages: Array[untyped]
         attr_reader expected_message: untyped
