@@ -1,0 +1,15 @@
+module Next
+  module Logging
+    # Performs asynchronous logging using a Event Stream.
+    #
+    class AsyncLog < Log
+      attr_reader event_stream: EventStream
+
+      def initialize: (System) -> void
+
+      private
+
+      def publish: (Logger::LogEvent) -> self
+    end
+  end
+end

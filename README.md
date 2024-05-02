@@ -289,6 +289,18 @@ end
 Under the hood, `Next` uses `Next::System#event_stream` to collect logs. See the following section 
 to learn more about Event Stream.
   
+#### Logging Options
+
+There are a few logging options that you can use for debugging actor system.
+
+If you want to log all received messages on the debug level, enable this option:
+
+```ruby
+system = Next.system("test") do |config|
+  config.debug.receive = true
+end
+```
+
 ### Event Stream 
 
 Each Actor System has its own Event Stream, it enables actors to communicate through a central

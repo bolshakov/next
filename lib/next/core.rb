@@ -53,12 +53,17 @@ module Next
             else
               process_message(message)
             end
+          rescue NoMatchingPatternError
+            # Death letter queue
           rescue => error
-            # puts "err: #{error.detailed_message}"
             handle_processing_error(error)
           end
         end
       end
+    end
+
+    private def log_message(message, handled:)
+      log.debug("received #{handled ? "handled" : "unhandled"} message `#{message.inspect}` from '#{sender&.name || "unknown"}`", identity.name)
     end
 
     private def process_system_message(message)
@@ -84,8 +89,7 @@ module Next
 
     private def process_message(message)
       actor.public_send(current_behaviour, message)
-    rescue NoMatchingPatternError
-      # Death letter queue
+      log_message(message, handled: true) if system.config.debug.receive
     end
 
     private def auto_receive_message(message)

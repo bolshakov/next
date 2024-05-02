@@ -8,6 +8,8 @@ module Next
         public_constant :DEFAULT_TIMEOUT
 
         private def receive_one(jailbreak:, timeout:)
+          return Fear.none if timeout <= 0
+
           Timeout.timeout(timeout) do
             Fear.some(jailbreak.take)
           end
@@ -25,7 +27,9 @@ module Next
 
           loop do
             remaining_timeout = deadline - Time.now
-            remaining_timeout = 0 if remaining_timeout < 0
+            if remaining_timeout <= 0
+              break if remaining_timeout
+            end
 
             case receive_one(jailbreak:, timeout: remaining_timeout)
             in Fear::None

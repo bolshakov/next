@@ -24,7 +24,7 @@ RSpec.describe Next::Testing::Matchers::FishForLog, :actor_system do
       end.to fail_with(<<~ERROR.strip)
         timeout (0.01) while waiting for log level=any message="How are you?".
         Received logs:
-          * #<data Next::Logger::Info progname=nil, message="Hi!", level=1>
+          * level=1 progname= message="Hi!"
       ERROR
     end
   end
@@ -48,7 +48,7 @@ RSpec.describe Next::Testing::Matchers::FishForLog, :actor_system do
       end.to fail_with(<<~ERROR.strip)
         timeout (0.01) while waiting for log level=info message="How are you?".
         Received logs:
-          * #<data Next::Logger::Info progname=nil, message="Hi!", level=1>
+          * level=1 progname= message="Hi!"
       ERROR
     end
 
@@ -60,7 +60,7 @@ RSpec.describe Next::Testing::Matchers::FishForLog, :actor_system do
       end.to fail_with(<<~ERROR.strip)
         timeout (0.01) while waiting for log level=debug message="How are you?".
         Received logs:
-          * #<data Next::Logger::Info progname=nil, message="Hi!", level=1>
+          * level=1 progname= message="Hi!"
       ERROR
     end
   end

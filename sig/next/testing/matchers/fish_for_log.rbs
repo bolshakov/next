@@ -14,6 +14,12 @@ module Next
         def initialize: (String, level: Symbol?, timeout: Numeric) -> void
 
         def matches?: (jailbreak: Concurrent::Channel) -> Logger::LogEvent
+
+        private
+
+        def formatted_actual: -> String
+
+        def formatted_expected: -> String
       end
     end
   end

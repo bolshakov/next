@@ -40,6 +40,8 @@ module Next
 
     def initialize_actor: (Reference)-> void
 
+    def log_message: (untyped, handled: bool) -> void
+
     def process_message: (untyped) -> void
 
     def process_system_message: (untyped) -> void

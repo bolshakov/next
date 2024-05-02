@@ -20,7 +20,6 @@ module Next
 
           loop do
             remaining_timeout = deadline - Time.now
-            remaining_timeout = 0 if remaining_timeout < 0
             case receive_one(jailbreak:, timeout: remaining_timeout)
             in Fear::Some(actual_message)
               if fuzzy_matched?(expected_message, actual_message)

@@ -1,7 +1,12 @@
 module Next
   class System
+    interface _DebugConfig
+      def receive: -> bool
+    end
+
     interface _Config
       def logger: -> Logger
+      def debug: -> _DebugConfig
     end
 
     include Dry::Configurable
@@ -15,6 +20,7 @@ module Next
 
     attr_reader event_stream: EventStream
     attr_reader log: Logging::Log
+    attr_reader log_lock: Concurrent::ReadWriteLock
     attr_reader name: String
     attr_reader root: Reference
     attr_reader user_root: Reference
@@ -36,7 +42,8 @@ module Next
 
     private
 
-    def initialize_logging: -> void
+    def initialize_sync_logging: -> void
+    def initialize_async_logging: -> void
     def start_actor_system: -> void
     def start_event_stream: -> void
     def start_root: -> void

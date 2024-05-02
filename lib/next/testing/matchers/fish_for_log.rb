@@ -27,7 +27,6 @@ module Next
 
           loop do
             remaining_timeout = deadline - Time.now
-            remaining_timeout = 0 if remaining_timeout < 0
             case receive_one(jailbreak:, timeout: remaining_timeout)
             in Fear::Some(actual_log_event)
               if fuzzy_matched?(expected_message, actual_log_event.message) && actual_log_event.is_a?(level)
@@ -47,6 +46,10 @@ module Next
           "timeout (#{timeout}) while waiting for log level=#{human_readable_level} message=#{formatted_expected}.#{formatted_actual}"
         end
 
+        def failure_message_when_negated
+          "expected not to receive log level=#{human_readable_level} message=#{formatted_expected}"
+        end
+
         private def formatted_expected
           RSpec::Support::ObjectFormatter.format(expected_message)
         end
@@ -54,7 +57,7 @@ module Next
         private def formatted_actual
           if actual_messages.any?
             actual_messages.reduce("\nReceived logs:") do |acc, msg|
-              acc + "\n  * #{RSpec::Support::ObjectFormatter.format(msg)}"
+              acc + "\n  * level=#{msg.level} progname=#{msg.progname} message=#{RSpec::Support::ObjectFormatter.format(msg.message)}"
             end
           else
             ""
