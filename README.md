@@ -301,6 +301,14 @@ system = Next.system("test") do |config|
 end
 ```
 
+If you want to log all auto received messages on the debug level, enable this option:
+
+```ruby
+system = Next.system("test") do |config|
+  config.debug.autoreceive = true
+end
+```
+
 ### Event Stream 
 
 Each Actor System has its own Event Stream, it enables actors to communicate through a central

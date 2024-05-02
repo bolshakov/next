@@ -9,10 +9,41 @@ RSpec.describe Next::Core, :actor_system do
     it "does not receive any messages after PoisonPill" do
       echo.tell :foo
       echo.tell Next::PoisonPill
+
       echo.tell :bar
 
       expect_message(:foo)
       expect_no_message(timeout: 0.2)
+    end
+
+    describe "config.debug.autoreceive" do
+      context "when enabled" do
+        let(:system) do
+          Next.system("test") do |config|
+            config.debug.autoreceive = true
+          end
+        end
+
+        it "logs" do
+          echo.tell Next::PoisonPill
+
+          expect_log("received AutoReceiveMessage #<Next::PoisonPill>", level: :debug)
+        end
+      end
+
+      context "when disabled" do
+        let(:system) do
+          Next.system("test") do |config|
+            config.debug.autoreceive = false
+          end
+        end
+
+        it "does not log" do
+          echo.tell Next::PoisonPill
+
+          expect_no_log(/received AutoReceiveMessage/, timeout: 0.2)
+        end
+      end
     end
   end
 

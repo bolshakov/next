@@ -46,7 +46,7 @@ module Next
         in Envelope(message, sender)
           LocalStorage.with_sender(sender) do
             case message
-            in AutoReceivedMessage
+            in AutoReceiveMessage
               auto_receive_message(message)
             in SystemMessage
               process_system_message(message)
@@ -93,6 +93,7 @@ module Next
     end
 
     private def auto_receive_message(message)
+      log.debug("received AutoReceiveMessage #{message}", identity.name) if system.config.debug.autoreceive
       case message
       in PoisonPill
         identity << SystemMessages::Terminate

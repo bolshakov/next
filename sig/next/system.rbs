@@ -2,6 +2,7 @@ module Next
   class System
     interface _DebugConfig
       def receive: -> bool
+      def autoreceive: -> bool
     end
 
     interface _Config
