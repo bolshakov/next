@@ -16,6 +16,11 @@ RSpec.describe Next::Core::FaultTolerance, :actor_system do
 
     it "does not process any messages" do
       expect(supervised.ask!(:counter, timeout: 0.2)).to be_none
+
+      expect_log(
+        be_kind_of(Next::ActorInitializationError).and(have_attributes(message: /exception during creation/)),
+        level: :error
+      )
     end
   end
 
@@ -26,6 +31,7 @@ RSpec.describe Next::Core::FaultTolerance, :actor_system do
       supervised.tell :fail
 
       expect(supervised.ask!(:counter, timeout: 0.1)).to be_none
+      expect_log(be_kind_of(NoMethodError), level: :error)
     end
 
     it "children also stops processing messages" do
@@ -84,6 +90,8 @@ RSpec.describe Next::Core::FaultTolerance, :actor_system do
           # Ensure supervisor is ready to supervise
           supervisor.ask! :counter
 
+          expect_log(be_kind_of(Next::ActorInitializationError), level: :error)
+
           # Don't fail on the recreation
           failure_flag.ask! false
           supervised.tell Next::SystemMessages::Recreate.new(NoMethodError.new)
@@ -136,6 +144,8 @@ RSpec.describe Next::Core::FaultTolerance, :actor_system do
           # Ensure supervisor is ready to supervise
           supervisor.ask! :counter
 
+          expect_log(be_kind_of(Next::ActorInitializationError), level: :error)
+
           # Don't fail on the recreation
           failure_flag.ask! false
           supervised.tell Next::SystemMessages::Resume.new(NoMethodError.new)
@@ -180,6 +190,8 @@ RSpec.describe Next::Core::FaultTolerance, :actor_system do
         it "terminates the supervised" do
           # Ensure supervised has failed
           supervised
+
+          expect_log(be_kind_of(Next::ActorInitializationError), level: :error)
 
           supervised.tell Next::SystemMessages::Terminate
 

@@ -1,0 +1,19 @@
+module RSpec
+  module Support
+    module ObjectFormatter
+      def self?.format: (untyped) -> String
+    end
+
+    module FuzzyMatcher
+      def self?.values_match?: (untyped, untyped) -> bool
+    end
+  end
+
+  module Matchers
+    module BuiltIn
+      class ContainExactly
+        def initialize: (Array[untyped]) -> void
+      end
+    end
+  end
+end

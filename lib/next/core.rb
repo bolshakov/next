@@ -46,7 +46,7 @@ module Next
         in Envelope(message, sender)
           LocalStorage.with_sender(sender) do
             case message
-            in AutoReceivedMessage
+            in AutoReceiveMessage
               auto_receive_message(message)
             in SystemMessage
               process_system_message(message)
@@ -54,11 +54,14 @@ module Next
               process_message(message)
             end
           rescue => error
-            # puts "err: #{error.detailed_message}"
             handle_processing_error(error)
           end
         end
       end
+    end
+
+    private def log_message(message, handled:)
+      log.debug("received #{handled ? "handled" : "unhandled"} message `#{message.inspect}` from '#{sender&.name || "unknown"}`", identity.name)
     end
 
     private def process_system_message(message)
@@ -84,11 +87,14 @@ module Next
 
     private def process_message(message)
       actor.public_send(current_behaviour, message)
+      log_message(message, handled: true) if system.config.debug.receive
     rescue NoMatchingPatternError
+      log_message(message, handled: false) if system.config.debug.unhandled
       # Death letter queue
     end
 
     private def auto_receive_message(message)
+      log.debug("received AutoReceiveMessage #{message}", identity.name) if system.config.debug.autoreceive
       case message
       in PoisonPill
         identity << SystemMessages::Terminate
@@ -116,8 +122,10 @@ module Next
     end
 
     private def supervise(child)
+      # TODO: what if it's being terminated?
       add_child(child)
       child << SystemMessages::Initialize.new(identity)
+      log.debug("now supervising", identity.name) if system.config.debug.lifecycle
     end
 
     private def initialize_actor(parent)
@@ -131,7 +139,11 @@ module Next
     private def create_actor
       serialized_execution.resume!
       become(Context::DEFAULT_BEHAVIOUR)
-      props.__new_actor__(self)
+      actor = props.__new_actor__(self)
+
+      log.debug("created", identity.name) if system.config.debug.lifecycle
+
+      actor
     end
 
     private def actor

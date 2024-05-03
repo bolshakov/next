@@ -20,6 +20,8 @@ module Next
       # Recreates actor loosing state.
       #
       private def handle_recreate(cause)
+        log.debug("restarting", identity.name) if system.config.debug.lifecycle
+
         if actor_initialized?
           # FIXME: make message available as Context#current_message and pass as message
           actor.around_pre_restart(reason: cause, message: Fear::None)
@@ -27,6 +29,7 @@ module Next
           self.actor = create_actor
 
           actor.around_post_restart(reason: cause)
+          log.debug("restarted", identity.name) if system.config.debug.lifecycle
         else
           # log
           create_on_failure
@@ -56,6 +59,7 @@ module Next
       private def create_on_failure
         serialized_execution.resume!
         self.actor = props.__new_actor__(self)
+        log.debug("restarted", identity.name) if system.config.debug.lifecycle
       rescue => error
         self.actor = nil
         handle_processing_error(error)
@@ -63,6 +67,7 @@ module Next
 
       # React on failure during the messages processing.
       private def handle_processing_error(error)
+        log.error(error, identity.name)
         serialized_execution.suspend!
         suspend_children
         parent.tell SystemMessages::Failed.new(child: identity, cause: error)
@@ -82,6 +87,8 @@ module Next
 
       # React on +SystemMessages::Terminate+ command from a parent.
       private def handle_terminate
+        log.debug("stopping", identity.name) if system.config.debug.lifecycle
+
         self.terminating = true
         children.each { |child| stop(child) }
         serialized_execution.suspend!
@@ -95,11 +102,12 @@ module Next
 
         begin
           actor.around_post_stop
-        rescue
-          # log it
+        rescue => error
+          log.error(error, identity.name)
         ensure
           self.actor = nil
           parent.tell SystemMessages::DeathWatchNotification.new(identity)
+          log.debug("stopped", identity.name) if system.config.debug.lifecycle
           termination_promise.success! Terminated.new(identity)
         end
       end

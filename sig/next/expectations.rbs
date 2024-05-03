@@ -7,7 +7,11 @@ module Next
 
       def expect_all_messages: (*untyped, ?timeout: Numeric) -> void
 
+      def expect_log: (untyped, level: Symbol?, ?timeout: Numeric)-> untyped
+
       def expect_message: (untyped, ?timeout: Numeric) { -> void } -> untyped
+
+      def expect_no_log: (untyped, ?timeout: Numeric) { -> void } -> untyped
 
       def expect_no_message: (untyped, ?timeout: Numeric, ?interval: Numeric)-> untyped
 

@@ -1,0 +1,20 @@
+module Next
+  module Logging
+    # This is the main interface for logging. It performs asynchronous logging
+    # using a Event Stream.
+    #
+    class SyncLog < Log
+      LEVELS: Hash[Symbol, Integer]
+
+      def self.level: (String | Symbol) -> Integer
+
+      attr_reader logger: ::Logger
+
+      def initialize: (::Logger) -> void
+
+      private
+
+      def add: (Integer, untyped, String?) -> self
+    end
+  end
+end

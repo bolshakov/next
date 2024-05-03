@@ -1,0 +1,6 @@
+module Concurrent
+  class ReadWriteLock
+    def with_read_lock: [T] { -> T } -> T
+    def with_write_lock: [T] { -> T } -> T
+  end
+end

@@ -70,6 +70,28 @@ module Next
         end
       end
 
+      def expect_log(expected_message, level: nil, timeout: DEFAULT_TIMEOUT)
+        matcher = Matchers::FishForLog.new(expected_message, level:, timeout:)
+
+        if matcher.matches?(jailbreak: test_logs_listener_jailbreak)
+          matcher.actual_message
+        else
+          raise ::RSpec::Expectations::ExpectationNotMetError,
+            matcher.failure_message,
+            caller(1)
+        end
+      end
+
+      def expect_no_log(expected_message, level: nil, timeout: DEFAULT_TIMEOUT)
+        matcher = Matchers::FishForLog.new(expected_message, level:, timeout:)
+
+        if matcher.matches?(jailbreak: test_logs_listener_jailbreak)
+          raise ::RSpec::Expectations::ExpectationNotMetError,
+            matcher.failure_message_when_negated,
+            caller(1)
+        end
+      end
+
       # Waits until a condition is met within a given timeout period.
       def await_condition(timeout: DEFAULT_TIMEOUT, interval: 0.01, message: "condition is not met")
         wail_till = Time.now + timeout

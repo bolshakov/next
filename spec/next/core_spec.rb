@@ -9,10 +9,41 @@ RSpec.describe Next::Core, :actor_system do
     it "does not receive any messages after PoisonPill" do
       echo.tell :foo
       echo.tell Next::PoisonPill
+
       echo.tell :bar
 
       expect_message(:foo)
       expect_no_message(timeout: 0.2)
+    end
+
+    describe "config.debug.autoreceive" do
+      context "when enabled" do
+        let(:system) do
+          Next.system("test") do |config|
+            config.debug.autoreceive = true
+          end
+        end
+
+        it "logs" do
+          echo.tell Next::PoisonPill
+
+          expect_log("received AutoReceiveMessage #<Next::PoisonPill>", level: :debug)
+        end
+      end
+
+      context "when disabled" do
+        let(:system) do
+          Next.system("test") do |config|
+            config.debug.autoreceive = false
+          end
+        end
+
+        it "does not log" do
+          echo.tell Next::PoisonPill
+
+          expect_no_log(/received AutoReceiveMessage/, timeout: 0.2)
+        end
+      end
     end
   end
 
@@ -63,6 +94,136 @@ RSpec.describe Next::Core, :actor_system do
         expect_message("child-1 stopped")
         expect_message("child-2 stopped")
         expect_message("parent stopped")
+      end
+    end
+  end
+
+  describe "system.config.debug.receive" do
+    let(:actor_ref) { system.actor_of(actor_class.props) }
+    let(:actor_class) do
+      Class.new(Next::Actor) do
+        def self.props = Next.props(self)
+
+        def receive(message)
+          case message
+          in "kawabanga"
+          # noop
+          in "fail"
+            raise "foo"
+          end
+        end
+      end
+    end
+
+    context "when enabled" do
+      let(:system) do
+        Next.system("test") do |config|
+          config.debug.receive = true
+        end
+      end
+
+      it "logs when received handled message" do
+        actor_ref.tell "kawabanga"
+
+        expect_log "received handled message `\"kawabanga\"` from '#{test_probe.name}`", level: :debug
+      end
+    end
+
+    context "when disabled" do
+      let(:system) do
+        Next.system("test") do |config|
+          config.debug.receive = false
+        end
+      end
+
+      it "does not log when received handled message" do
+        actor_ref.tell "kawabanga"
+
+        expect_no_log(/received handled message `"kawabanga"`/, timeout: 0.05)
+      end
+    end
+  end
+
+  describe "system.config.debug.unhandled" do
+    let(:actor_ref) { system.actor_of(actor_class.props) }
+    let(:actor_class) do
+      Class.new(Next::Actor) do
+        def self.props = Next.props(self)
+
+        def receive(message)
+          case message
+          in "kawabanga"
+            # noop
+          end
+        end
+      end
+    end
+
+    context "when enabled" do
+      let(:system) do
+        Next.system("test") do |config|
+          config.debug.unhandled = true
+        end
+      end
+
+      it "logs when received unhandled message" do
+        actor_ref.tell "Hi! How are you?"
+
+        expect_log "received unhandled message `\"Hi! How are you?\"` from '#{test_probe.name}`", level: :debug
+      end
+    end
+
+    context "when disabled" do
+      let(:system) do
+        Next.system("test") do |config|
+          config.debug.unhandled = false
+        end
+      end
+
+      it "does not log when received handled message" do
+        actor_ref.tell "Hi! How are you?"
+
+        expect_no_log(/received unhandled message/, timeout: 0.05)
+      end
+    end
+  end
+
+  describe "system.config.debug.lifecycle" do
+    let(:actor_ref) { system.actor_of(actor_class.props, "destroyer") }
+    let(:actor_class) do
+      Class.new(Next::Actor) do
+        def self.props = Next.props(self)
+
+        def receive(message)
+        end
+      end
+    end
+
+    context "when enabled" do
+      let(:system) do
+        Next.system("test") do |config|
+          config.debug.lifecycle = true
+        end
+      end
+
+      it "logs" do
+        actor_ref.tell "Hi! How are you?"
+
+        expect_log "created", level: :debug
+      end
+    end
+
+    context "when disabled" do
+      let(:system) do
+        Next.system("test") do |config|
+          config.debug.lifecycle = false
+        end
+      end
+
+      it "does not log" do
+        actor_ref.tell "Hi! How are you?"
+
+        expect_no_log(/created/, timeout: 0.05)
       end
     end
   end

@@ -1,5 +1,5 @@
 module Next
-  PoisonPill: AutoReceivedMessage
+  PoisonPill: AutoReceiveMessage
 
   VERSION: String
 

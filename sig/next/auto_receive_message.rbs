@@ -1,0 +1,4 @@
+module Next
+  class AutoReceiveMessage < SingletonObject
+  end
+end
