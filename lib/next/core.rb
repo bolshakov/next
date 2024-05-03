@@ -86,11 +86,20 @@ module Next
     end
 
     private def process_message(message)
-      actor.public_send(current_behaviour, message)
-      log_message(message, handled: true) if system.config.debug.receive
-    rescue NoMatchingPatternError
+      catch(:skip) do
+        actor.public_send(current_behaviour, message)
+        log_message(message, handled: true) if system.config.debug.receive
+        return
+      rescue NoMatchingPatternError => error
+        if error.backtrace&.first&.end_with?(":in `#{current_behaviour}'") # This is kind of fragile
+          throw :skip
+        else
+          raise
+        end
+      end
+
+      system.event_stream.publish(DeadLetter.new(sender:, recipient: identity, message:))
       log_message(message, handled: false) if system.config.debug.unhandled
-      # Death letter queue
     end
 
     private def auto_receive_message(message)

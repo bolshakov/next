@@ -12,6 +12,22 @@ module Next
       end
     end
 
+    # Call this method to skip message processing.
+    #
+    # Example
+    #   def receive(message)
+    #     case message
+    #     when "count"
+    #       count
+    #     else
+    #       skip
+    #       # this code is not reachable
+    #     end
+    #   end
+    #
+    # The skipped message ends up in the death letter queue.
+    def skip = throw(:skip)
+
     # Shortened for +context.sender+. Refers to a sender of a last message.
     def sender = context.sender
 

@@ -25,6 +25,8 @@ module Next
     def sender: -> Reference
     def receive: (untyped) -> void
 
+    def skip: -> void
+
     def supervisor_strategy: -> SupervisorStrategy
   end
 end
