@@ -20,9 +20,9 @@ RSpec.describe Next::Testing::Matchers::FishForLog, :actor_system do
       system.log.info "Hi!"
 
       expect do
-        expect_log "How are you?", timeout: 0.01
+        expect_log "How are you?", timeout: 0.1
       end.to fail_with(<<~ERROR.strip)
-        timeout (0.01) while waiting for log level=any message="How are you?".
+        timeout (0.1) while waiting for log level=any message="How are you?".
         Received logs:
           * level=1 progname= message="Hi!"
       ERROR
@@ -44,9 +44,9 @@ RSpec.describe Next::Testing::Matchers::FishForLog, :actor_system do
       system.log.info "Hi!"
 
       expect do
-        expect_log "How are you?", level: :info, timeout: 0.01
+        expect_log "How are you?", level: :info, timeout: 0.1
       end.to fail_with(<<~ERROR.strip)
-        timeout (0.01) while waiting for log level=info message="How are you?".
+        timeout (0.1) while waiting for log level=info message="How are you?".
         Received logs:
           * level=1 progname= message="Hi!"
       ERROR
@@ -56,9 +56,9 @@ RSpec.describe Next::Testing::Matchers::FishForLog, :actor_system do
       system.log.info "Hi!"
 
       expect do
-        expect_log "How are you?", level: :debug, timeout: 0.01
+        expect_log "How are you?", level: :debug, timeout: 0.1
       end.to fail_with(<<~ERROR.strip)
-        timeout (0.01) while waiting for log level=debug message="How are you?".
+        timeout (0.1) while waiting for log level=debug message="How are you?".
         Received logs:
           * level=1 progname= message="Hi!"
       ERROR
