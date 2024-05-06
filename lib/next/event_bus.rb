@@ -28,10 +28,13 @@ module Next
       @subscriptions = Hash.new do |subscribers, matcher|
         subscribers[matcher] = Set.new
       end
+      context.log.debug("Event Bus started")
     end
 
     def receive(message)
       case message
+      in :initialize
+        sender << :initialized
       in Subscribe(event:, subscriber:)
         create_subscription(event:, subscriber:)
       in Publish(event:)

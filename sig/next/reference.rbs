@@ -1,10 +1,11 @@
 module Next
   class Reference
+    attr_reader parent: Reference?
+
     def initialize: [T < Actor] (Props[T], ?name: String, parent: Reference?, system: System) -> self
 
     attr_reader core: Core[Actor]
     attr_reader name: String
-    attr_reader props: Props[Actor]
 
     alias << tell
 
@@ -18,10 +19,14 @@ module Next
 
     def path: -> String
 
+    def terminated?: -> bool
+
     def termination_future: -> Fear::Future[Terminated]
 
     private
 
-    def start_actor: (parent: Reference?, system: System)-> Core[Actor]
+    def accepting_messages: (message: untyped, sender: Reference) { (untyped, Reference) -> void } -> void
+
+    def start_actor: [T < Actor] (parent: Reference?, system: System, props: Props[T])-> Core[T]
   end
 end

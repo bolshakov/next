@@ -5,5 +5,7 @@ module Fear
     def on_complete: { (Try[T]) -> void } -> self
 
     def each: { (T) -> void } -> self
+
+    def completed?: -> bool
   end
 end

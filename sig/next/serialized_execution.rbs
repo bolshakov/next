@@ -3,6 +3,7 @@ module Next
     include Concurrent::Concern::Logging
 
     type job = [Concurrent::AbstractExecutorService, Envelope, Proc]
+
     attr_accessor being_executed: bool
     attr_reader stash: Stash
 
@@ -14,9 +15,10 @@ module Next
     def posts: (Array[job]) -> bool?
 
     def resume!: -> self
-    def suspend!: -> self
 
-    def suspended?: -> bool
+    def drain: -> Array[Envelope]
+
+    def suspend!: -> self
 
     private
 

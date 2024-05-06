@@ -71,4 +71,14 @@ RSpec.describe Next::SerializedExecution::Stash do
       expect(stash.shift).to be_none
     end
   end
+
+  specify "#drain" do
+    system_job = system_job(Object.new)
+
+    stash.push(job(42), job(43), job(44))
+    stash.push(system_job)
+
+    expect(stash.drain).to eq([job(42), job(43), job(44)])
+    expect(stash.to_a).to eq([system_job])
+  end
 end

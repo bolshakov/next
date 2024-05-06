@@ -98,6 +98,10 @@ module Next
       log_lock.with_read_lock { @log }
     end
 
+    def to_s
+      "#<Next::System name=#{name}>"
+    end
+
     private def start_actor_system
       start_root
       start_user_root
@@ -107,7 +111,7 @@ module Next
     private def start_root
       @root = Reference.new(ROOT_PROPS, name:, parent: nil, system: self)
       # Root is a parent of self so far
-      root << SystemMessages::Initialize.new(@root)
+      root << SystemMessages::Initialize.new(nil)
     end
 
     # Starts the root actor of all the user actors in the system

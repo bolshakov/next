@@ -44,6 +44,9 @@ module Next
     attr_reader :current_behaviour
     private :current_behaviour
 
+    # Call this method to skip message processing
+    def pass = throw(:pass)
+
     def initialize
       super()
 

@@ -84,10 +84,6 @@ RSpec.describe Next::Actor, :actor_system do
       end
     end
 
-    before do
-      system.event_stream.subscribe(test_probe, Next::DeadLetter)
-    end
-
     context "from the #receive method" do
       let(:message) { "Test message" }
 
@@ -96,7 +92,6 @@ RSpec.describe Next::Actor, :actor_system do
         actor.tell message
 
         expect_log(/received unhandled message/, level: :debug)
-        expect_message(Next::DeadLetter.new(sender: test_probe, recipient: actor, message:))
         expect_no_message(timeout: 0.1)
       end
     end

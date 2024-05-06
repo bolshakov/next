@@ -16,11 +16,17 @@ module Next
 
     def initialize: ({props: Props[ActorClass], identity: Reference, parent: Reference?, system: System}) -> void
 
+    def running?: -> bool
+
     def process_envelope: (Envelope)-> void
 
     def run: -> void
 
     def schedule_execution: (Envelope) { (Envelope) -> void } -> void
+
+    def terminated?: -> bool
+
+    def terminating?: -> bool
 
     private
 
@@ -47,7 +53,5 @@ module Next
     def process_system_message: (untyped) -> void
 
     def supervise: (Reference) -> void
-
-    def terminating?: -> bool
   end
 end

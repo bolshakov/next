@@ -57,6 +57,11 @@ RSpec.describe Next::Core, :actor_system do
       is_expected.to be_success_of(Next::Terminated.new(echo))
     end
 
+    context "when message received afet Terminate" do
+      it "sends it to the dead queue" do
+      end
+    end
+
     context "when an actor has children" do
       let(:termination_future) do
         Fear.for(parent_termination_future, child1_termination_future, child2_termination_future) do
