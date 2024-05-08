@@ -9,11 +9,11 @@ RSpec.shared_context :actor_testing, :actor_system do
 
   let(:test_probe_props) { Next::Testing::TestActor.props(jailbreak: test_probe_jailbreak) }
   let(:test_probe_jailbreak) { Next::Testing::TestActor.jailbreak }
-  let(:test_probe) { system.actor_of(test_probe_props, "test-actor-" + SecureRandom.uuid) }
+  let(:test_probe) { system.actor_of(test_probe_props, "test-probe") }
 
   let(:test_logs_listener_props) { Next::Testing::TestActor.props(jailbreak: test_logs_listener_jailbreak) }
   let(:test_logs_listener_jailbreak) { Next::Testing::TestActor.jailbreak }
-  let(:test_logs_listener) { system.actor_of(test_logs_listener_props, "test-logs-listener-" + SecureRandom.uuid) }
+  let(:test_logs_listener) { system.actor_of(test_logs_listener_props, "test-logs-listener") }
 
   around do |example|
     Next::LocalStorage.with_current_identity(test_probe) do

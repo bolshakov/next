@@ -105,8 +105,17 @@ module Next
         rescue => error
           log.error(error, identity.name)
         ensure
+          serialized_execution.drain.each do |envelope|
+            system.event_stream.publish(
+              DeadLetter.new(
+                sender: envelope.sender,
+                message: envelope.message,
+                recipient: identity
+              )
+            )
+          end
           self.actor = nil
-          parent.tell SystemMessages::DeathWatchNotification.new(identity)
+          parent&.tell SystemMessages::DeathWatchNotification.new(identity) # root actor corner case
           log.debug("stopped", identity.name) if system.config.debug.lifecycle
           termination_promise.success! Terminated.new(identity)
         end

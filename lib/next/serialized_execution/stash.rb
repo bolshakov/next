@@ -35,6 +35,12 @@ module Next
         suspended
       end
 
+      def drain
+        drained_jobs = @user_jobs
+        @user_jobs = []
+        drained_jobs
+      end
+
       def push(*envelops)
         system_messages, user_messages = envelops.partition { _1.envelope.system_message? }
         system_jobs.push(*system_messages)

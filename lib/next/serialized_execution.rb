@@ -50,14 +50,6 @@ module Next
       true
     end
 
-    def resume!
-      take_and_call_job do
-        stash.resume!
-      end
-
-      self
-    end
-
     private def take_and_call_job(&before_take)
       job = synchronize do
         before_take.call
@@ -74,6 +66,14 @@ module Next
       job.each { call_job(_1) }
     end
 
+    def resume!
+      take_and_call_job do
+        stash.resume!
+      end
+
+      self
+    end
+
     def suspend!
       synchronize do
         stash.suspend!
@@ -81,8 +81,10 @@ module Next
       self
     end
 
-    def suspended?
-      stash.suspended?
+    def drain
+      synchronize do
+        stash.drain.map(&:envelope)
+      end
     end
 
     private def ns_initialize

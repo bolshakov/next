@@ -24,6 +24,8 @@ module Next
 
     def log: -> Logging::Log
 
+    def pass: -> void
+
     def sender: -> Reference
 
     private

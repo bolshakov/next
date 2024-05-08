@@ -7,6 +7,8 @@ module Next
 
       def initialize: (?suspended: bool)-> void
 
+      def drain: -> Array[Job]
+
       def empty?: -> bool
 
       def push: (*Job) -> self

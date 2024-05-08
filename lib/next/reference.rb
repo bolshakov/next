@@ -19,10 +19,13 @@ module Next
     attr_reader :core
     protected :core
 
+    attr_reader :parent
+    protected :parent
+
     def initialize(props, parent:, system:, name: SecureRandom.uuid)
-      @props = props
       @name = name.to_s
-      @core = start_actor(parent:, system:)
+      @parent = parent
+      @core = start_actor(parent:, system:, props:)
       freeze
     end
 
@@ -32,7 +35,9 @@ module Next
     # @param message
     # @param sender who's sending the message. By default it's current actor
     def tell(message, sender = LocalStorage.current_identity)
-      core.process_envelope Envelope.new(message:, sender:)
+      accepting_messages(message:, sender:) do |message, sender|
+        core.process_envelope Envelope.new(message:, sender:)
+      end
 
       self
     end
@@ -47,12 +52,14 @@ module Next
     def ask(message, sender = LocalStorage.current_identity)
       promise = Fear::Promise.new
 
-      ask_support = core
-        .actor_of(AskSupport.props(promise))
-        .tell(AskSupport::Ask.new(self, message))
+      accepting_messages(message:, sender:) do |message, sender|
+        ask_support = core
+          .actor_of(AskSupport.props(promise))
+          .tell(AskSupport::Ask.new(self, message))
 
-      # This actor is supervising AskSupport
-      self << SystemMessages::Supervise.new(ask_support)
+        # This actor is supervising AskSupport
+        self << SystemMessages::Supervise.new(ask_support)
+      end
 
       promise.to_future
     end
@@ -69,7 +76,7 @@ module Next
     end
 
     def path
-      if core.parent == self # root actor
+      if core.parent.nil? # root actor
         ["next:/", name].join("/")
       else
         [core.parent.path, name].join("/")
@@ -81,8 +88,7 @@ module Next
     def ==(other)
       other.is_a?(self.class) &&
         name == other.name &&
-        props == other.props &&
-        core == other.core
+        parent == other.parent
     end
 
     def to_s
@@ -98,12 +104,20 @@ module Next
     end
 
     # @api private
-    def termination_future
-      core.termination_future
+    def termination_future = core.termination_future
+
+    def terminated? = termination_future.completed?
+
+    private def start_actor(parent:, system:, props:)
+      Core.new(props:, identity: self, parent:, system:)
     end
 
-    private def start_actor(parent:, system:)
-      Core.new(props:, identity: self, parent:, system:)
+    private def accepting_messages(message:, sender:)
+      if message.is_a?(SystemMessage) || core.running?
+        yield(message, sender)
+      elsif self != core.system.event_stream.event_bus
+        core.system.event_stream.publish(DeadLetter.new(sender:, message:, recipient: self))
+      end
     end
   end
 end

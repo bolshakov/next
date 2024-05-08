@@ -3,10 +3,10 @@ module Next
     class Initialize < Data
       include SystemMessage
 
-      attr_reader parent: Reference
+      attr_reader parent: Reference?
 
-      def self.new: (parent: Reference) -> instance
-                  | (Reference) -> instance
+      def self.new: (parent: Reference?) -> instance
+                  | (Reference?) -> instance
     end
   end
 end

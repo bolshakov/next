@@ -55,4 +55,57 @@ RSpec.describe Next::Actor, :actor_system do
       expect_all_messages("Hello from the initializer", "Second message")
     end
   end
+
+  context "when a NoMatchingPatternError exception is thrown" do
+    let(:system) do
+      Next.system("test") do |config|
+        config.debug.unhandled = true
+      end
+    end
+
+    let(:actor_class) do
+      Class.new(ActorWithInspector) do
+        def receive(message)
+          case message
+          in :deeper
+            deeper(message)
+          end
+        end
+
+        private def deeper(message)
+          case message
+          in :test
+          end
+        end
+
+        def post_restart(reason:)
+          inspector << ["restarted", reason]
+        end
+      end
+    end
+
+    context "from the #receive method" do
+      let(:message) { "Test message" }
+
+      it "considers message unhandled and does not restart an actor" do
+        actor = system.actor_of(actor_class.props)
+        actor.tell message
+
+        expect_log(/received unhandled message/, level: :debug)
+        expect_no_message(timeout: 0.1)
+      end
+    end
+
+    context "from the method that #receive calls" do
+      it "raises NoMatchingPatternError and consider method handled" do
+        actor = system.actor_of(actor_class.props)
+        actor.tell :deeper
+
+        expect_log(be_kind_of(NoMatchingPatternError), level: :error)
+        expect_no_log(/received unhandled message/, timeout: 0.1)
+        expect_message ["restarted", be_kind_of(NoMatchingPatternError)]
+        expect_no_message timeout: 0.1
+      end
+    end
+  end
 end

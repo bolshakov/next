@@ -61,7 +61,9 @@ module Next
     end
 
     private def log_message(message, handled:)
-      log.debug("received #{handled ? "handled" : "unhandled"} message `#{message.inspect}` from '#{sender&.name || "unknown"}`", identity.name)
+      if identity.path.start_with?("next://#{system.name}/user/") && identity.name != "test-logs-listener"
+        log.debug("received #{handled ? "handled" : "unhandled"} message `#{message.inspect}` from '#{sender&.name || "unknown"}`", identity.name)
+      end
     end
 
     private def process_system_message(message)
@@ -86,11 +88,20 @@ module Next
     end
 
     private def process_message(message)
-      actor.public_send(current_behaviour, message)
-      log_message(message, handled: true) if system.config.debug.receive
-    rescue NoMatchingPatternError
+      catch(:pass) do
+        actor.public_send(current_behaviour, message)
+        log_message(message, handled: true) if system.config.debug.receive
+        return
+      rescue NoMatchingPatternError => error
+        if error.backtrace&.first&.end_with?(":in `#{current_behaviour}'") # This is kind of fragile
+          pass
+        else
+          raise
+        end
+      end
+
+      system.event_stream.publish(DeadLetter.new(sender:, recipient: identity, message:))
       log_message(message, handled: false) if system.config.debug.unhandled
-      # Death letter queue
     end
 
     private def auto_receive_message(message)
@@ -157,8 +168,10 @@ module Next
     attr_writer :actor
     private :actor=
 
-    private def terminating?
-      @terminating
-    end
+    def running? = !(terminated? || terminating?)
+
+    private def terminating? = @terminating
+
+    private def terminated? = @termination_future.completed?
   end
 end

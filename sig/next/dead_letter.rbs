@@ -1,0 +1,9 @@
+module Next
+  class DeadLetter < Data
+    attr_reader sender: Reference
+    attr_reader recipient: Reference
+    attr_reader message: untyped
+
+    def self.new: (sender: Reference, recipient: Reference, message: untyped) -> instance
+  end
+end

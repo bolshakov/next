@@ -12,6 +12,23 @@ module Next
       end
     end
 
+    # Call this method to skip message processing and pass it
+    # to the dead letters
+    #
+    # Example
+    #   def receive(message)
+    #     case message
+    #     when "count"
+    #       count
+    #     else
+    #       pass
+    #       # this code is not reachable
+    #     end
+    #   end
+    #
+    # The skipped message ends up in the dead letter queue.
+    def pass = context.pass
+
     # Shortened for +context.sender+. Refers to a sender of a last message.
     def sender = context.sender
 
