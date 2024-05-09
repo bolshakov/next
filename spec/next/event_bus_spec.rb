@@ -5,6 +5,8 @@ RSpec.describe Next::EventBus, :actor_system do
 
   def subscribe(...) = Next::EventBus::Subscribe.new(...)
 
+  def unsubscribe(...) = Next::EventBus::Unsubscribe.new(...)
+
   def publish(...) = Next::EventBus::Publish.new(...)
 
   context "when subscribed to the same event twice" do
@@ -73,6 +75,20 @@ RSpec.describe Next::EventBus, :actor_system do
 
       expect_message(42)
       expect_message(42)
+    end
+  end
+
+  context "when unsubscribed" do
+    before do
+      event_bus.tell subscribe(event: Numeric, subscriber: test_probe)
+    end
+
+    it "does not receive any events" do
+      event_bus.tell unsubscribe(subscriber: test_probe)
+
+      event_bus.tell publish(event: 42)
+
+      expect_no_message(timeout: 0.1)
     end
   end
 end

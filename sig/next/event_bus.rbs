@@ -10,10 +10,12 @@ module Next
 
     private
 
-    def create_subscription: (event: untyped, subscriber: Reference) -> void
+    def subscribe: (event: untyped, subscriber: Reference) -> void
 
-    def publish_event: (event: untyped) -> void
+    def publish: (event: untyped) -> void
 
     def subscribers: (untyped) -> Set[Reference]
+
+    def unsubscribe: (subscriber: Reference) -> void
   end
 end

@@ -20,13 +20,14 @@ module Next
     attr_reader :subscriptions
 
     Subscribe = Data.define(:event, :subscriber)
+    Unsubscribe = Data.define(:subscriber)
     Publish = Data.define(:event)
 
     def self.props = Next.props(self)
 
     def initialize
-      @subscriptions = Hash.new do |subscribers, matcher|
-        subscribers[matcher] = Set.new
+      @subscriptions = Hash.new do |subscriptions, matcher|
+        subscriptions[matcher] = Set.new
       end
       context.log.debug("Event Bus started")
     end
@@ -36,17 +37,25 @@ module Next
       in :initialize
         sender << :initialized
       in Subscribe(event:, subscriber:)
-        create_subscription(event:, subscriber:)
+        subscribe(event:, subscriber:)
+      in Unsubscribe(subscriber:)
+        unsubscribe(subscriber:)
       in Publish(event:)
-        publish_event(event:)
+        publish(event:)
       end
     end
 
-    private def create_subscription(event:, subscriber:)
+    private def subscribe(event:, subscriber:)
       subscriptions[event].add(subscriber)
     end
 
-    private def publish_event(event:)
+    private def unsubscribe(subscriber:)
+      subscriptions.each do |_, subscribers|
+        subscribers.delete(subscriber)
+      end
+    end
+
+    private def publish(event:)
       subscribers(event).each do |subscriber|
         subscriber.tell(event)
       end

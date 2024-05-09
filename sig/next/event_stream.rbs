@@ -7,5 +7,7 @@ module Next
     def publish: (untyped) -> self
 
     def subscribe: (Reference, untyped) -> self
+
+    def unsubscribe: (Reference) -> self
   end
 end

@@ -31,6 +31,8 @@ module Next
     attr_reader :log_lock
     private :log_lock
 
+    attr_reader :log
+
     class << self
       # Gracefully terminates all known actor systems
       def terminate_all!
@@ -51,12 +53,9 @@ module Next
       #
       # To ensure logging ability during start/shutdown, we log to +$stdout+. Therefore, the logger is
       # protected with a read-write lock.
-      @log_lock = Concurrent::ReadWriteLock.new
       initialize_sync_logging
 
       start_actor_system
-      start_event_stream
-      initialize_async_logging
       when_terminated.each { puts "\nActor System `#{name}` has been terminated." }
     end
 
@@ -94,10 +93,6 @@ module Next
       Fear::Await.result(when_terminated, TERMINATION_AWAIT_TIMEOUT)
     end
 
-    def log
-      log_lock.with_read_lock { @log }
-    end
-
     def to_s
       "#<Next::System name=#{name}>"
     end
@@ -105,6 +100,8 @@ module Next
     private def start_actor_system
       start_root
       start_user_root
+      start_event_stream
+      initialize_async_logging
     end
 
     # Starts the root of all the actors in the system
@@ -116,34 +113,25 @@ module Next
 
     # Starts the root actor of all the user actors in the system
     private def start_user_root
-      @user_root = Reference.new(USER_ROOT_PROPS, name: "user", parent: root, system: self)
-
-      root << SystemMessages::Supervise.new(user_root)
+      @user_root = root.ask!(:initialize_user_root).get
     end
 
     private def start_event_stream
-      event_bus = Reference.new(EventBus.props, name: "event_stream", parent: root, system: self)
-      root << SystemMessages::Supervise.new(event_bus)
+      event_bus = root.ask!(:initialize_event_bus).get
 
       @event_stream = EventStream.new(event_bus:)
     end
 
     private def initialize_sync_logging
-      log_lock.with_write_lock do
-        @log = if config.stdout_log_level
-          Logging::SyncLog.new(::Logger.new($stdout, level: Logging::SyncLog.level(config.stdout_log_level)))
-        else
-          Logging::SyncLog.new(::Logger.new(nil))
-        end
+      @log = if config.stdout_log_level
+        Logging::SyncLog.new(::Logger.new($stdout, level: Logging::SyncLog.level(config.stdout_log_level)))
+      else
+        Logging::SyncLog.new(::Logger.new(nil))
       end
     end
 
     private def initialize_async_logging
-      logger = Reference.new(Logger.props(logger: config.logger), name: "logger", parent: root, system: self)
-      event_stream.subscribe(logger, Logger::LogEvent)
-      root << SystemMessages::Supervise.new(logger)
-
-      log_lock.with_read_lock do
+      root.ask(:initialize_logger).each do |_|
         @log = Logging::AsyncLog.new(self)
       end
     end

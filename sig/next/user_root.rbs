@@ -10,6 +10,8 @@ module Next
       def self.new: [T < Actor] (props: Props[T], name: String, promise: Fear::Promise[Reference]) -> instance
     end
 
+    def self.props: -> Props[UserRoot]
+
     def initialize: -> void
 
     private
