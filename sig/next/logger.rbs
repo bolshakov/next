@@ -6,6 +6,10 @@ module Next
 
     def initialize: (logger: ::Logger) -> void
 
+    def post_stop: -> void
+
+    def pre_start: -> void
+
     def receive: (LogEvent) -> void
   end
 end

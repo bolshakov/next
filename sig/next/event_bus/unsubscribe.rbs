@@ -1,0 +1,10 @@
+module Next
+  class EventBus < Actor
+    class Unsubscribe < Data
+      attr_reader subscriber: Reference
+
+      def self.new: (subscriber: Reference) -> instance
+                  | (Reference) -> instance
+    end
+  end
+end

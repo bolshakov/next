@@ -33,5 +33,16 @@ module Next
 
       self
     end
+
+    # Unsubscribes a subscriber from all events.
+    #
+    # @param subscriber The subscriber Reference.
+    def unsubscribe(subscriber)
+      raise ArgumentError, "subscriber should be type of Reference" unless subscriber.is_a?(Reference)
+
+      event_bus.tell EventBus::Unsubscribe.new(subscriber:)
+
+      self
+    end
   end
 end

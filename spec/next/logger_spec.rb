@@ -12,7 +12,7 @@ RSpec.describe Next::Logger, :actor_system do
         Fear::Await.result(logger_ref.termination_future, 3)
       end
 
-      it "calls Logger#add with the giver serverity" do
+      it "calls Logger#add with the giver severity" do
         expect(logger).to receive(:add).with(log_event.level, log_event.message, log_event.progname)
 
         logger_ref.tell log_event

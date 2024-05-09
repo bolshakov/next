@@ -3,6 +3,8 @@
 module Next
   # Root is the parent of all the actors defined by a user.
   class UserRoot < Actor
+    def self.props = Next.props(self)
+
     # include Logging
     CreateActor = Data.define(:props, :name, :promise) do
       def to_s
