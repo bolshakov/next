@@ -87,6 +87,8 @@ module Next
 
       # React on +SystemMessages::Terminate+ command from a parent.
       private def handle_terminate
+        return if terminating?
+
         log.debug("stopping", identity.name) if system.config.debug.lifecycle
 
         self.terminating = true

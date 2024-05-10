@@ -8,7 +8,7 @@ module Next
     include Dry::Configurable
 
     setting :logger, default: ::Logger.new($stdout)
-    setting :stdout_log_level, default: "unknown"
+    setting :stdout_log_level, default: "warn"
     setting :debug do
       setting :receive, default: false
       setting :autoreceive, default: false
@@ -27,9 +27,6 @@ module Next
     private :user_root
 
     attr_reader :event_stream
-
-    attr_reader :log_lock
-    private :log_lock
 
     attr_reader :log
 
@@ -56,7 +53,7 @@ module Next
       initialize_sync_logging
 
       start_actor_system
-      when_terminated.each { puts "\nActor System `#{name}` has been terminated." }
+      when_terminated.each { log.info("Actor System `#{name}` has been terminated.") }
     end
 
     # Starts a new actor with given props and name

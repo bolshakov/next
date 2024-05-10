@@ -57,7 +57,7 @@ RSpec.describe Next::Core, :actor_system do
       is_expected.to be_success_of(Next::Terminated.new(echo))
     end
 
-    context "when message received afet Terminate" do
+    context "when message received after Terminate" do
       it "sends it to the dead queue" do
       end
     end

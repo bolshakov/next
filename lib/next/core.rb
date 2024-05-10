@@ -136,7 +136,7 @@ module Next
       # TODO: what if it's being terminated?
       add_child(child)
       child << SystemMessages::Initialize.new(identity)
-      log.debug("now supervising", identity.name) if system.config.debug.lifecycle
+      log.debug("now supervising #{child}", identity.name) if system.config.debug.lifecycle
     end
 
     private def initialize_actor(parent)
