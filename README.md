@@ -300,7 +300,8 @@ system = Next.system('my_system') do |config|
   config.stdout_log_level = nil
 end
 ```
-  
+Default log level for `$sdtout` logging is `warn`.
+
 #### Logging Options
 
 There are a few logging options that you can use for debugging actor system.
