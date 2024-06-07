@@ -1,0 +1,9 @@
+---
+next:
+  logger: stdout
+  stdout_log_level: warn
+  debug:
+    receive: off
+    autoreceive: off
+    unhandled: off
+    lifecycle: off

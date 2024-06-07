@@ -12,6 +12,8 @@ target :lib do
   library "securerandom"          # Standard libraries
   library "timeout"
   library "logger"
+  library "pathname"
+  library "configx"
 
   ignore "lib/next/testing/rspec.rb"
   ignore "lib/next/testing/expectations.rb"

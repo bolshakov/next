@@ -18,6 +18,14 @@ module Next
     end
 
     def system(name, &configuration) = System.new(name, &configuration)
+
+    # @api private
+    def default_config
+      current_directory = __dir__
+      raise "Could not find current directory 🤷" unless current_directory
+
+      Pathname(current_directory).join("next", "config.yml")
+    end
   end
 end
 

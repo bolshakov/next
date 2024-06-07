@@ -6,4 +6,5 @@ module Next
   def self?.props: [T < Actor] (untyped, **untyped) -> Props[T]
   def self?.default_executor: -> Concurrent::AbstractExecutorService
   def self?.system: (String) { () [self: Dry::Configurable::_Settings] -> void }-> System
+  def self?.default_config: -> Pathname
 end
