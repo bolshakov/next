@@ -136,7 +136,7 @@ module Next
       # TODO: what if it's being terminated?
       add_child(child)
       child << SystemMessages::Initialize.new(identity)
-      log.debug("now supervising #{child}", identity.name) if system.config.debug.lifecycle
+      log.debug("now supervising #{child}", identity.name) if system.configx.next.debug.lifecycle
     end
 
     private def initialize_actor(parent)
@@ -152,7 +152,7 @@ module Next
       become(Context::DEFAULT_BEHAVIOUR)
       actor = props.__new_actor__(self)
 
-      log.debug("created", identity.name) if system.config.debug.lifecycle
+      log.debug("created", identity.name) if system.configx.next.debug.lifecycle
 
       actor
     end

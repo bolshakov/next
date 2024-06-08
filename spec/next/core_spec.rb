@@ -197,13 +197,11 @@ RSpec.describe Next::Core, :actor_system do
         end
       end
     end
+    let(:system) { Next.system("test", config) }
+    let(:config) { Next::ConfigFactory.new.load({next: {debug: {lifecycle: debug_lifecycle}}}) }
 
     context "when enabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.lifecycle = true
-        end
-      end
+      let(:debug_lifecycle) { true }
 
       it "logs" do
         actor_ref.tell "Hi! How are you?"
@@ -213,11 +211,7 @@ RSpec.describe Next::Core, :actor_system do
     end
 
     context "when disabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.lifecycle = false
-        end
-      end
+      let(:debug_lifecycle) { false }
 
       it "does not log" do
         actor_ref.tell "Hi! How are you?"

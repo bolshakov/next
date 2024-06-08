@@ -332,10 +332,10 @@ next:
 
 If you want to log actors' lifecycle (start, stop, restart, etc.), enable this option:
 
-```ruby
-system = Next.system("test") do |config|
-  config.debug.lifecycle = true
-end
+```yml
+next:
+  debug:
+    lifecycle: true 
 ```
 
 ### Event Stream 

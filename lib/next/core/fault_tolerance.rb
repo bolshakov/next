@@ -20,7 +20,7 @@ module Next
       # Recreates actor loosing state.
       #
       private def handle_recreate(cause)
-        log.debug("restarting", identity.name) if system.config.debug.lifecycle
+        log.debug("restarting", identity.name) if system.configx.next.debug.lifecycle
 
         if actor_initialized?
           # FIXME: make message available as Context#current_message and pass as message
@@ -29,7 +29,7 @@ module Next
           self.actor = create_actor
 
           actor.around_post_restart(reason: cause)
-          log.debug("restarted", identity.name) if system.config.debug.lifecycle
+          log.debug("restarted", identity.name) if system.configx.next.debug.lifecycle
         else
           # log
           create_on_failure
@@ -59,7 +59,7 @@ module Next
       private def create_on_failure
         serialized_execution.resume!
         self.actor = props.__new_actor__(self)
-        log.debug("restarted", identity.name) if system.config.debug.lifecycle
+        log.debug("restarted", identity.name) if system.configx.next.debug.lifecycle
       rescue => error
         self.actor = nil
         handle_processing_error(error)
@@ -89,7 +89,7 @@ module Next
       private def handle_terminate
         return if terminating?
 
-        log.debug("stopping", identity.name) if system.config.debug.lifecycle
+        log.debug("stopping", identity.name) if system.configx.next.debug.lifecycle
 
         self.terminating = true
         children.each { |child| stop(child) }
@@ -118,7 +118,7 @@ module Next
           end
           self.actor = nil
           parent&.tell SystemMessages::DeathWatchNotification.new(identity) # root actor corner case
-          log.debug("stopped", identity.name) if system.config.debug.lifecycle
+          log.debug("stopped", identity.name) if system.configx.next.debug.lifecycle
           termination_promise.success! Terminated.new(identity)
         end
       end

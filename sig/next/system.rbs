@@ -1,12 +1,8 @@
 module Next
   class System
-    interface _DebugConfig
-      def lifecycle: -> bool
-    end
 
     interface _Config
       def logger: -> Logger
-      def debug: -> _DebugConfig
     end
 
     include Dry::Configurable

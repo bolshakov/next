@@ -8,9 +8,6 @@ module Next
     include Dry::Configurable
 
     setting :logger, default: ::Logger.new($stdout)
-    setting :debug do
-      setting :lifecycle, default: false
-    end
 
     attr_reader :name
     ROOT_PROPS = Next.props(Root)
