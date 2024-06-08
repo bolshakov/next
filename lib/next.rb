@@ -17,7 +17,7 @@ module Next
       Concurrent.global_io_executor
     end
 
-    def system(name, &configuration) = System.new(name, &configuration)
+    def system(name, config = ConfigFactory.load, &configuration) = System.new(name, config, &configuration)
 
     # @api private
     def default_config

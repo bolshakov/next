@@ -8,7 +8,6 @@ module Next
     include Dry::Configurable
 
     setting :logger, default: ::Logger.new($stdout)
-    setting :stdout_log_level, default: "warn"
     setting :debug do
       setting :receive, default: false
       setting :autoreceive, default: false
@@ -27,8 +26,8 @@ module Next
     private :user_root
 
     attr_reader :event_stream
-
     attr_reader :log
+    attr_reader :configx
 
     class << self
       # Gracefully terminates all known actor systems
@@ -40,9 +39,9 @@ module Next
       end
     end
 
-    def initialize(name, &configuration)
+    def initialize(name, config, &configuration)
       @name = name
-
+      @configx = config
       configure(&configuration)
 
       # Next implements asynchronous logging. However, during the actor system's start and
@@ -120,8 +119,8 @@ module Next
     end
 
     private def initialize_sync_logging
-      @log = if config.stdout_log_level
-        Logging::SyncLog.new(::Logger.new($stdout, level: Logging::SyncLog.level(config.stdout_log_level)))
+      @log = if configx.next.stdout_log_level
+        Logging::SyncLog.new(::Logger.new($stdout, level: Logging::SyncLog.level(configx.next.stdout_log_level)))
       else
         Logging::SyncLog.new(::Logger.new(nil))
       end

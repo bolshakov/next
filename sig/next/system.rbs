@@ -10,7 +10,6 @@ module Next
     interface _Config
       def logger: -> Logger
       def debug: -> _DebugConfig
-      def stdout_log_level: -> (String | Symbol)
     end
 
     include Dry::Configurable
@@ -22,13 +21,14 @@ module Next
 
     def self.terminate_all!: -> void
 
+    attr_reader configx: Config
     attr_reader event_stream: EventStream
     attr_reader log: Logging::Log
     attr_reader name: String
     attr_reader root: Reference
     attr_reader user_root: Reference
 
-    def initialize: (String) { () [self: Dry::Configurable::_Settings] -> void } -> void
+    def initialize: (String, Config) { () [self: Dry::Configurable::_Settings] -> void } -> void
 
     def config: -> _Config
 

@@ -5,11 +5,17 @@ RSpec.describe Next::DeadLetter, :actor_system do
   let(:props) { actor_class.props }
   let(:message) { "Test message" }
   let(:system) do
-    Next.system("test-system") do |config|
+    Next.system("test-system", config) do |config|
       config.debug.receive = true
       config.debug.unhandled = true
-      config.stdout_log_level = "debug"
     end
+  end
+  let(:config) do
+    Next::ConfigFactory.new.load(
+      next: {
+        stdout_log_level: "debug"
+      }
+    )
   end
 
   before do
