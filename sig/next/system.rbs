@@ -1,7 +1,6 @@
 module Next
   class System
     interface _DebugConfig
-      def autoreceive: -> bool
       def unhandled: -> bool
       def lifecycle: -> bool
     end

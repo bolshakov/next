@@ -17,12 +17,17 @@ RSpec.describe Next::Core, :actor_system do
     end
 
     describe "config.debug.autoreceive" do
+      let(:system) { Next.system("test", config) }
+      let(:config) do
+        Next::ConfigFactory.new.load(
+          next: {
+            debug: {autoreceive: debug_autoreceive}
+          }
+        )
+      end
+
       context "when enabled" do
-        let(:system) do
-          Next.system("test") do |config|
-            config.debug.autoreceive = true
-          end
-        end
+        let(:debug_autoreceive) { true }
 
         it "logs" do
           echo.tell Next::PoisonPill
@@ -32,11 +37,7 @@ RSpec.describe Next::Core, :actor_system do
       end
 
       context "when disabled" do
-        let(:system) do
-          Next.system("test") do |config|
-            config.debug.autoreceive = false
-          end
-        end
+        let(:debug_autoreceive) { false }
 
         it "does not log" do
           echo.tell Next::PoisonPill

@@ -105,7 +105,7 @@ module Next
     end
 
     private def auto_receive_message(message)
-      log.debug("received AutoReceiveMessage #{message}", identity.name) if system.config.debug.autoreceive
+      log.debug("received AutoReceiveMessage #{message}", identity.name) if system.configx.next.debug.autoreceive
       case message
       in PoisonPill
         identity << SystemMessages::Terminate

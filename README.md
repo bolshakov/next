@@ -316,10 +316,10 @@ next:
 
 If you want to log all auto received messages on the debug level, enable this option:
 
-```ruby
-system = Next.system("test") do |config|
-  config.debug.autoreceive = true
-end
+```yml
+next:
+  debug:
+    autoreceive: true
 ```
 
 If you want to log unhandled messages on the debug level, enable this option:
