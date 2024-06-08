@@ -103,7 +103,7 @@ RSpec.describe Next::Core, :actor_system do
     end
   end
 
-  describe "system.config.debug.receive" do
+  describe "system.config.next.debug.receive" do
     let(:actor_ref) { system.actor_of(actor_class.props) }
     let(:actor_class) do
       Class.new(Next::Actor) do
@@ -119,14 +119,17 @@ RSpec.describe Next::Core, :actor_system do
         end
       end
     end
+    let(:system) { Next.system("test", config) }
+    let(:config) do
+      Next::ConfigFactory.new.load(
+        next: {
+          debug: {receive: debug_receive}
+        }
+      )
+    end
 
     context "when enabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.receive = true
-        end
-      end
-
+      let(:debug_receive) { true }
       it "logs when received handled message" do
         actor_ref.tell "kawabanga"
 
@@ -135,11 +138,7 @@ RSpec.describe Next::Core, :actor_system do
     end
 
     context "when disabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.receive = false
-        end
-      end
+      let(:debug_receive) { false }
 
       it "does not log when received handled message" do
         actor_ref.tell "kawabanga"

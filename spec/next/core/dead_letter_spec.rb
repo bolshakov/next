@@ -6,14 +6,16 @@ RSpec.describe Next::DeadLetter, :actor_system do
   let(:message) { "Test message" }
   let(:system) do
     Next.system("test-system", config) do |config|
-      config.debug.receive = true
       config.debug.unhandled = true
     end
   end
   let(:config) do
     Next::ConfigFactory.new.load(
       next: {
-        stdout_log_level: "debug"
+        stdout_log_level: "debug",
+        debug: {
+          receive: true
+        }
       }
     )
   end

@@ -1,7 +1,6 @@
 module Next
   class System
     interface _DebugConfig
-      def receive: -> bool
       def autoreceive: -> bool
       def unhandled: -> bool
       def lifecycle: -> bool
@@ -28,7 +27,7 @@ module Next
     attr_reader root: Reference
     attr_reader user_root: Reference
 
-    def initialize: (String, Config) { () [self: Dry::Configurable::_Settings] -> void } -> void
+    def initialize: [T < ConfigX::Config](String, T) { () [self: Dry::Configurable::_Settings] -> void } -> void
 
     def config: -> _Config
 

@@ -308,10 +308,10 @@ There are a few logging options that you can use for debugging actor system.
 
 If you want to log all received messages on the debug level, enable this option:
 
-```ruby
-system = Next.system("test") do |config|
-  config.debug.receive = true
-end
+```yml
+next:
+  debug:
+    receive: true
 ```
 
 If you want to log all auto received messages on the debug level, enable this option:

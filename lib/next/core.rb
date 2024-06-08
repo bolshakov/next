@@ -90,7 +90,7 @@ module Next
     private def process_message(message)
       catch(:pass) do
         actor.public_send(current_behaviour, message)
-        log_message(message, handled: true) if system.config.debug.receive
+        log_message(message, handled: true) if system.configx.next.debug.receive
         return
       rescue NoMatchingPatternError => error
         if error.backtrace&.first&.end_with?(":in `#{current_behaviour}'") # This is kind of fragile
