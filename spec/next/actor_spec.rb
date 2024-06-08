@@ -57,11 +57,8 @@ RSpec.describe Next::Actor, :actor_system do
   end
 
   context "when a NoMatchingPatternError exception is thrown" do
-    let(:system) do
-      Next.system("test") do |config|
-        config.debug.unhandled = true
-      end
-    end
+    let(:system) { Next.system("test", config) }
+    let(:config) { Next::ConfigFactory.new.load(next: {debug: {unhandled: true}}) }
 
     let(:actor_class) do
       Class.new(ActorWithInspector) do

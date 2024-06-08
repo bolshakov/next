@@ -4,17 +4,14 @@ RSpec.describe Next::DeadLetter, :actor_system do
   let(:actor_ref) { system.actor_of(props, "dead-letters-test") }
   let(:props) { actor_class.props }
   let(:message) { "Test message" }
-  let(:system) do
-    Next.system("test-system", config) do |config|
-      config.debug.unhandled = true
-    end
-  end
+  let(:system) { Next.system("test-system", config) }
   let(:config) do
     Next::ConfigFactory.new.load(
       next: {
         stdout_log_level: "debug",
         debug: {
-          receive: true
+          receive: true,
+          unhandled: true
         }
       }
     )

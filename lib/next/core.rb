@@ -101,7 +101,7 @@ module Next
       end
 
       system.event_stream.publish(DeadLetter.new(sender:, recipient: identity, message:))
-      log_message(message, handled: false) if system.config.debug.unhandled
+      log_message(message, handled: false) if system.configx.next.debug.unhandled
     end
 
     private def auto_receive_message(message)

@@ -163,13 +163,11 @@ RSpec.describe Next::Core, :actor_system do
         end
       end
     end
+    let(:system) { Next.system("test", config) }
+    let(:config) { Next::ConfigFactory.new.load({next: {debug: {unhandled: debug_unhandled}}}) }
 
     context "when enabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.unhandled = true
-        end
-      end
+      let(:debug_unhandled) { true }
 
       it "logs when received unhandled message" do
         actor_ref.tell "Hi! How are you?"
@@ -179,11 +177,7 @@ RSpec.describe Next::Core, :actor_system do
     end
 
     context "when disabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.unhandled = false
-        end
-      end
+      let(:debug_unhandled) { false }
 
       it "does not log when received handled message" do
         actor_ref.tell "Hi! How are you?"

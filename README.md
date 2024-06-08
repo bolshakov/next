@@ -324,10 +324,10 @@ next:
 
 If you want to log unhandled messages on the debug level, enable this option:
 
-```ruby
-system = Next.system("test") do |config|
-  config.debug.unhandled = true
-end
+```yml
+next:
+  debug:
+      unhandled: true
 ```
 
 If you want to log actors' lifecycle (start, stop, restart, etc.), enable this option:

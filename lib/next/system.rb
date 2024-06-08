@@ -9,7 +9,6 @@ module Next
 
     setting :logger, default: ::Logger.new($stdout)
     setting :debug do
-      setting :unhandled, default: false
       setting :lifecycle, default: false
     end
 
