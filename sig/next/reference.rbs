@@ -27,6 +27,8 @@ module Next
 
     def accepting_messages: (message: untyped, sender: Reference) { (untyped, Reference) -> void } -> void
 
+    def config: -> Config
+
     def start_actor: [T < Actor] (parent: Reference?, system: System, props: Props[T])-> Core[T]
   end
 end

@@ -45,7 +45,7 @@ module Next
 
     # Starts a new actor with given props and name
     #
-    def actor_of(props, name = SecureRandom.uuid, timeout: 3)
+    def actor_of(props, name = SecureRandom.uuid, timeout: config.next.actor.creation_timeout)
       promise = Fear::Promise.new
       user_root << UserRoot::CreateActor.new(props:, name:, promise:)
       Fear::Await.result(promise.to_future, timeout).get

@@ -64,7 +64,7 @@ module Next
       promise.to_future
     end
 
-    def ask!(message, sender = LocalStorage.current_identity, timeout: 3)
+    def ask!(message, sender = LocalStorage.current_identity, timeout: config.next.actor.creation_timeout)
       case ask(message, sender).then { Fear::Await.result(_1, timeout) }
       in Fear::Success(value)
         Fear.some(value)
@@ -119,5 +119,7 @@ module Next
         core.system.event_stream.publish(DeadLetter.new(sender:, message:, recipient: self))
       end
     end
+
+    private def config = core.system.config
   end
 end

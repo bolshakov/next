@@ -7,3 +7,7 @@ next:
     autoreceive: off
     unhandled: off
     lifecycle: off
+
+  actor:
+    # Timeout (in seconds) for blocking actor initialization.
+    creation_timeout: 3
