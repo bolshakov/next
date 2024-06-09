@@ -8,6 +8,10 @@ next:
     unhandled: off
     lifecycle: off
 
+  # When the actor system starts, log the entire configuration at the INFO level.
+  # This can be helpful if you're unsure about the configuration in use.
+  log_config_on_start: off
+
   actor:
     # Timeout (in seconds) for blocking actor initialization.
     creation_timeout: 3

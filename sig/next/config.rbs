@@ -16,6 +16,7 @@ module Next
       def stdout_log_level: -> String
       def debug: -> _NextDebugConfig
       def actor: -> _ActorConfig
+      def log_config_on_start: -> bool
     end
 
     def next: -> _NextConfig

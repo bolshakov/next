@@ -64,7 +64,8 @@ class Conductor < Next::Actor
   end
 end
 
-system = Next.system("99-bottles")
+config = Next::ConfigFactory.new.load({next: {log_config_on_start: true, stdout_log_level: "info"}})
+system = Next.system("99-bottles", config)
 
 singer = system.actor_of(Singer.props, "singer")
 conductor = system.actor_of(Conductor.props(singer:), "conductor")

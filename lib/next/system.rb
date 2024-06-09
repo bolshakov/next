@@ -38,6 +38,7 @@ module Next
       # To ensure logging ability during start/shutdown, we log to +$stdout+. Therefore, the logger is
       # protected with a read-write lock.
       initialize_sync_logging
+      log.info(config.to_h) if config.next.log_config_on_start
 
       start_actor_system
       when_terminated.each { log.info("Actor System `#{name}` has been terminated.") }
