@@ -1,0 +1,4 @@
+module Next
+  class ConfigFactory < ConfigX::ConfigFactory
+  end
+end

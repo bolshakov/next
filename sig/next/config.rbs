@@ -1,0 +1,18 @@
+module Next
+  class Config < ConfigX::Config
+    interface _NextDebugConfig
+      def receive: -> bool
+      def autoreceive: -> bool
+      def unhandled: -> bool
+      def lifecycle: -> bool
+    end
+
+    interface _NextConfig
+      def logger: -> String?
+      def stdout_log_level: -> String
+      def debug: -> _NextDebugConfig
+    end
+
+    def next: -> _NextConfig
+  end
+end

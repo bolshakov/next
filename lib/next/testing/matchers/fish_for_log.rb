@@ -4,7 +4,13 @@ module Next
   module Testing
     module Matchers
       class FishForLog < Base
-        LEVELS = {info: Logger::Info, debug: Logger::Debug, warn: Logger::Warn, error: Logger::Error, fatal: Logger::Fatal}
+        LEVELS = {
+          info: Logger::Info,
+          debug: Logger::Debug,
+          warn: Logger::Warn,
+          error: Logger::Error,
+          fatal: Logger::Fatal
+        }.freeze
         private_constant :LEVELS
 
         attr_reader :expected_message

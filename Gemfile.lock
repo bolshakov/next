@@ -3,7 +3,7 @@ PATH
   specs:
     next (0.1.0)
       concurrent-ruby
-      dry-configurable
+      configx
       fear
       zeitwerk
 
@@ -27,16 +27,14 @@ GEM
     concurrent-ruby (1.2.3)
     concurrent-ruby-edge (0.7.0)
       concurrent-ruby (~> 1.2.0)
+    configx (0.4.0)
+      deep_merge
+      zeitwerk
     connection_pool (2.4.1)
     csv (3.3.0)
+    deep_merge (1.2.2)
     diff-lcs (1.5.1)
     drb (2.2.1)
-    dry-configurable (0.16.1)
-      dry-core (~> 0.6)
-      zeitwerk (~> 2.6)
-    dry-core (0.9.1)
-      concurrent-ruby (~> 1.0)
-      zeitwerk (~> 2.6)
     fear (3.0.0)
       zeitwerk
     fear-rspec (0.3.0)

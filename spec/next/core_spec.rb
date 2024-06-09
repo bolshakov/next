@@ -17,12 +17,17 @@ RSpec.describe Next::Core, :actor_system do
     end
 
     describe "config.debug.autoreceive" do
+      let(:system) { Next.system("test", config) }
+      let(:config) do
+        Next::ConfigFactory.new.load(
+          next: {
+            debug: {autoreceive: debug_autoreceive}
+          }
+        )
+      end
+
       context "when enabled" do
-        let(:system) do
-          Next.system("test") do |config|
-            config.debug.autoreceive = true
-          end
-        end
+        let(:debug_autoreceive) { true }
 
         it "logs" do
           echo.tell Next::PoisonPill
@@ -32,11 +37,7 @@ RSpec.describe Next::Core, :actor_system do
       end
 
       context "when disabled" do
-        let(:system) do
-          Next.system("test") do |config|
-            config.debug.autoreceive = false
-          end
-        end
+        let(:debug_autoreceive) { false }
 
         it "does not log" do
           echo.tell Next::PoisonPill
@@ -103,7 +104,7 @@ RSpec.describe Next::Core, :actor_system do
     end
   end
 
-  describe "system.config.debug.receive" do
+  describe "system.config.next.debug.receive" do
     let(:actor_ref) { system.actor_of(actor_class.props) }
     let(:actor_class) do
       Class.new(Next::Actor) do
@@ -119,14 +120,17 @@ RSpec.describe Next::Core, :actor_system do
         end
       end
     end
+    let(:system) { Next.system("test", config) }
+    let(:config) do
+      Next::ConfigFactory.new.load(
+        next: {
+          debug: {receive: debug_receive}
+        }
+      )
+    end
 
     context "when enabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.receive = true
-        end
-      end
-
+      let(:debug_receive) { true }
       it "logs when received handled message" do
         actor_ref.tell "kawabanga"
 
@@ -135,11 +139,7 @@ RSpec.describe Next::Core, :actor_system do
     end
 
     context "when disabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.receive = false
-        end
-      end
+      let(:debug_receive) { false }
 
       it "does not log when received handled message" do
         actor_ref.tell "kawabanga"
@@ -163,13 +163,11 @@ RSpec.describe Next::Core, :actor_system do
         end
       end
     end
+    let(:system) { Next.system("test", config) }
+    let(:config) { Next::ConfigFactory.new.load({next: {debug: {unhandled: debug_unhandled}}}) }
 
     context "when enabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.unhandled = true
-        end
-      end
+      let(:debug_unhandled) { true }
 
       it "logs when received unhandled message" do
         actor_ref.tell "Hi! How are you?"
@@ -179,11 +177,7 @@ RSpec.describe Next::Core, :actor_system do
     end
 
     context "when disabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.unhandled = false
-        end
-      end
+      let(:debug_unhandled) { false }
 
       it "does not log when received handled message" do
         actor_ref.tell "Hi! How are you?"
@@ -203,13 +197,11 @@ RSpec.describe Next::Core, :actor_system do
         end
       end
     end
+    let(:system) { Next.system("test", config) }
+    let(:config) { Next::ConfigFactory.new.load({next: {debug: {lifecycle: debug_lifecycle}}}) }
 
     context "when enabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.lifecycle = true
-        end
-      end
+      let(:debug_lifecycle) { true }
 
       it "logs" do
         actor_ref.tell "Hi! How are you?"
@@ -219,11 +211,7 @@ RSpec.describe Next::Core, :actor_system do
     end
 
     context "when disabled" do
-      let(:system) do
-        Next.system("test") do |config|
-          config.debug.lifecycle = false
-        end
-      end
+      let(:debug_lifecycle) { false }
 
       it "does not log" do
         actor_ref.tell "Hi! How are you?"

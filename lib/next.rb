@@ -17,7 +17,15 @@ module Next
       Concurrent.global_io_executor
     end
 
-    def system(name, &configuration) = System.new(name, &configuration)
+    def system(name, config = ConfigFactory.load, &configuration) = System.new(name, config, &configuration)
+
+    # @api private
+    def default_config
+      current_directory = __dir__
+      raise "Could not find current directory 🤷" unless current_directory
+
+      Pathname(current_directory).join("next", "config.yml")
+    end
   end
 end
 

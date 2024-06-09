@@ -22,11 +22,13 @@ RSpec.shared_context :actor_testing, :actor_system do
   end
 
   before do
+    # Make sure async logging is started
+    await_condition { system.log.is_a?(Next::Logging::AsyncLog) }
+
     system.event_stream.subscribe(test_logs_listener, Next::Logger::LogEvent)
   end
 
   after do
-    system.terminate
-    system.await_termination
+    system.terminate! unless system.terminated?
   end
 end
