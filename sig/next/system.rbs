@@ -1,34 +1,23 @@
 module Next
   class System
-
-    interface _Config
-      def logger: -> Logger
-    end
-
-    include Dry::Configurable
-    extend Dry::Configurable::_Settings
-
     TERMINATION_AWAIT_TIMEOUT: Numeric
     ROOT_PROPS: Props[Root]
     USER_ROOT_PROPS: Props[UserRoot]
 
     def self.terminate_all!: -> void
 
-    attr_reader configx: Config
+    attr_reader config: Config
     attr_reader event_stream: EventStream
     attr_reader log: Logging::Log
     attr_reader name: String
     attr_reader root: Reference
     attr_reader user_root: Reference
 
-    def initialize: [T < ConfigX::Config](String, T) { () [self: Dry::Configurable::_Settings] -> void } -> void
-
-    def config: -> _Config
+    def initialize: [T < ConfigX::Config] (String, T) -> void
 
     def actor_of: [T < Actor] (Props[T], ?String, ?timeout: Numeric) -> Reference
 
     def await_termination: -> Fear::Try[Terminated]
-
 
     def terminate: -> Fear::Future[Terminated]
 

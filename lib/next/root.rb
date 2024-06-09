@@ -16,7 +16,7 @@ module Next
     end
 
     private def instantiate_logger
-      logdev = context.system.configx.next.logger
+      logdev = context.system.config.next.logger
       case logdev
       in "stdout"
         ::Logger.new($stdout)

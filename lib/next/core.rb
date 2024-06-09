@@ -90,7 +90,7 @@ module Next
     private def process_message(message)
       catch(:pass) do
         actor.public_send(current_behaviour, message)
-        log_message(message, handled: true) if system.configx.next.debug.receive
+        log_message(message, handled: true) if system.config.next.debug.receive
         return
       rescue NoMatchingPatternError => error
         if error.backtrace&.first&.end_with?(":in `#{current_behaviour}'") # This is kind of fragile
@@ -101,11 +101,11 @@ module Next
       end
 
       system.event_stream.publish(DeadLetter.new(sender:, recipient: identity, message:))
-      log_message(message, handled: false) if system.configx.next.debug.unhandled
+      log_message(message, handled: false) if system.config.next.debug.unhandled
     end
 
     private def auto_receive_message(message)
-      log.debug("received AutoReceiveMessage #{message}", identity.name) if system.configx.next.debug.autoreceive
+      log.debug("received AutoReceiveMessage #{message}", identity.name) if system.config.next.debug.autoreceive
       case message
       in PoisonPill
         identity << SystemMessages::Terminate
@@ -136,7 +136,7 @@ module Next
       # TODO: what if it's being terminated?
       add_child(child)
       child << SystemMessages::Initialize.new(identity)
-      log.debug("now supervising #{child}", identity.name) if system.configx.next.debug.lifecycle
+      log.debug("now supervising #{child}", identity.name) if system.config.next.debug.lifecycle
     end
 
     private def initialize_actor(parent)
@@ -152,7 +152,7 @@ module Next
       become(Context::DEFAULT_BEHAVIOUR)
       actor = props.__new_actor__(self)
 
-      log.debug("created", identity.name) if system.configx.next.debug.lifecycle
+      log.debug("created", identity.name) if system.config.next.debug.lifecycle
 
       actor
     end

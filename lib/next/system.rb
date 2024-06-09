@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-require "dry-configurable"
 require "logger"
 
 module Next
   class System
-    include Dry::Configurable
-
     attr_reader :name
     ROOT_PROPS = Next.props(Root)
     USER_ROOT_PROPS = Next.props(UserRoot)
@@ -19,7 +16,7 @@ module Next
 
     attr_reader :event_stream
     attr_reader :log
-    attr_reader :configx
+    attr_reader :config
 
     class << self
       # Gracefully terminates all known actor systems
@@ -31,10 +28,9 @@ module Next
       end
     end
 
-    def initialize(name, config, &configuration)
+    def initialize(name, config)
       @name = name
-      @configx = config
-      configure(&configuration)
+      @config = config
 
       # Next implements asynchronous logging. However, during the actor system's start and
       # shutdown, asynchronous logging might not always be available.
@@ -114,8 +110,8 @@ module Next
     end
 
     private def initialize_sync_logging
-      @log = if configx.next.stdout_log_level
-        Logging::SyncLog.new(::Logger.new($stdout, level: Logging::SyncLog.level(configx.next.stdout_log_level)))
+      @log = if config.next.stdout_log_level
+        Logging::SyncLog.new(::Logger.new($stdout, level: Logging::SyncLog.level(config.next.stdout_log_level)))
       else
         Logging::SyncLog.new(::Logger.new(nil))
       end
