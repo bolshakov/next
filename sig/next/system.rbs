@@ -34,6 +34,8 @@ module Next
 
     def terminate!: -> Fear::Try[Terminated]
 
+    def terminated?: -> bool
+
     def when_terminated: -> Fear::Future[Terminated]
 
     private

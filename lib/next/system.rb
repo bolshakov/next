@@ -7,8 +7,6 @@ module Next
   class System
     include Dry::Configurable
 
-    setting :logger, default: ::Logger.new($stdout)
-
     attr_reader :name
     ROOT_PROPS = Next.props(Root)
     USER_ROOT_PROPS = Next.props(UserRoot)
@@ -74,6 +72,9 @@ module Next
     def when_terminated
       root.termination_future
     end
+
+    # Checks whether the actor system is terminated
+    def terminated? = when_terminated.completed?
 
     TERMINATION_AWAIT_TIMEOUT = 100_000 * 365 * 24 * 60 * 60
     private_constant(:TERMINATION_AWAIT_TIMEOUT)

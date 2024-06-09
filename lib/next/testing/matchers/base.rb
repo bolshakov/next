@@ -13,7 +13,7 @@ module Next
           Timeout.timeout(timeout) do
             Fear.some(jailbreak.take)
           end
-        rescue Timeout::Error
+        rescue ::Timeout::Error
           Fear.none
         end
 

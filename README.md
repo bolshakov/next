@@ -279,10 +279,9 @@ The logging in the Next framework is asynchronous implying the following:
 To configure a logger (by default `$stdout` is used) you can pass an option configuration 
 block to the `Next.system` method:
 
-```ruby 
-system = Next.system('my_system') do |config|
-  config.logger = Logger.new('/path/to/your/logfile.log')
-end
+```yml 
+next:
+  logger: /path/to/your/logfile.log
 ```
 
 Under the hood, `Next` uses `Next::System#event_stream` to collect logs. See the following section 

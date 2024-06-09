@@ -33,12 +33,14 @@ RSpec.describe Next::System, :actor_system do
   end
 
   describe "#terminate" do
+    let(:system) { Next.system("test-system") }
+
     it "does not create actors after termination" do
-      system.terminate
+      system.terminate!
 
-      system.actor_of(EchoActor.props, "echo2").tell "sent after termination"
-
-      expect_no_message(timeout: 0.1)
+      expect do
+        system.actor_of(EchoActor.props, "echo2", timeout: 0.1)
+      end.to raise_error(Timeout::Error)
     end
   end
 
@@ -67,26 +69,16 @@ RSpec.describe Next::System, :actor_system do
   end
 
   describe "#log" do
-    let(:system) do
-      l = logio
-      Next.system("test") do |config|
-        config.logger = Logger.new(l)
-      end
-    end
-    let(:logio) { StringIO.new }
-    let(:log) { system.log }
+    let(:system) { Next.system("test") }
     let(:event_stream) { system.event_stream }
-
     let(:subscriber) { system.actor_of(ActorWithInspector.props(inspector: test_probe)) }
 
     it "receives log events" do
       event_stream.subscribe(subscriber, Next::Logger::LogEvent)
 
-      log.info("Log event", "specs")
+      system.log.info("Log event", "specs")
 
-      await_condition do
-        logio.string.include?("specs: Log event")
-      end
+      expect_message(Next::Logger::Info.new(message: "Log event", progname: "specs"))
     end
   end
 end
