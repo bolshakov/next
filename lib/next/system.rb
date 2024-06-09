@@ -38,6 +38,7 @@ module Next
       # To ensure logging ability during start/shutdown, we log to +$stdout+. Therefore, the logger is
       # protected with a read-write lock.
       initialize_sync_logging
+      log.info(config.to_h) if config.next.log_config_on_start
 
       start_actor_system
       when_terminated.each { log.info("Actor System `#{name}` has been terminated.") }
@@ -45,7 +46,7 @@ module Next
 
     # Starts a new actor with given props and name
     #
-    def actor_of(props, name = SecureRandom.uuid, timeout: 3)
+    def actor_of(props, name = SecureRandom.uuid, timeout: config.next.actor.creation_timeout)
       promise = Fear::Promise.new
       user_root << UserRoot::CreateActor.new(props:, name:, promise:)
       Fear::Await.result(promise.to_future, timeout).get

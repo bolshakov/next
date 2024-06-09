@@ -13,7 +13,7 @@ module Next
     attr_reader root: Reference
     attr_reader user_root: Reference
 
-    def initialize: [T < ConfigX::Config] (String, T) -> void
+    def initialize: (String, Config) -> void
 
     def actor_of: [T < Actor] (Props[T], ?String, ?timeout: Numeric) -> Reference
 
