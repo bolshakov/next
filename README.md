@@ -240,6 +240,78 @@ Signal.trap("INT") {
 This signal handler ensures that all actor systems are terminated when the user presses Ctrl+C or sends an 
 interrupt signal to the application.
 
+### Configuring Actor System
+
+You can customize the Actor System configuration by passing optional arguments to the `Next.system` method:
+
+```ruby 
+config = Next::ConfigFactory.load("development")
+system = Next.system("example", config)
+```
+
+Configuration is loaded from the config files in the following order:
+
+1 Default configuration (see `lib/next/config.yml`)
+2. `config/next.yml`
+3. `config/next/{env}.yml`
+4. `config/next.local.yml`
+5. `config/next/{env}.local.yml`
+6. Environment Variables 
+
+Inside the configuration file, you put actor system-specific configuration inside the `next` key:
+
+```yaml
+next:
+  debug: 
+    receive: on
+```
+
+The configuration from all sources is merged so you only need to specify the parts to override compared to the default.
+Additionally, you can override the configuration using environment variables. For instance, to override the `next.debug.receive`
+option you need to export `NEXT__DEBUG__RECEIVE=on` environment variable.
+
+If you want to pass an additional configuration for your application, feel free to specify alongside the `next` key:
+
+```yaml
+next: 
+  debug: 
+    receive: on
+
+worker:
+  access_token: bar
+```
+
+This configuration is available in your actors through the `context.system.config` method:
+
+```ruby
+def receive(message)
+  access_token = context.system.config.worker.access_token
+  # ...
+end
+```
+
+Sometimes, you may want to configure multiple actor systems in the same application. In this case, you can use the following 
+trick:
+
+```yaml
+my_app1:
+  next: 
+    debug: 
+      receive: on
+
+my_app2:
+  next:
+    debug:
+      receive: off
+```
+
+```ruby
+config = Next::ConfigFactory.load("development")
+my_app1 = Next.system("app1", config.my_app1)
+my_app2 = Next.system("app2", config.my_app2)
+```
+
+
 ### Logging
 
 In the Next framework, you can perform logging from within your actors by including `Next::Logging` 
@@ -288,17 +360,23 @@ Under the hood, `Next` uses `Next::System#event_stream` to collect logs. See the
 to learn more about Event Stream.
 
 During the actor system start and termination, asynchronous logging is not available and `$stoudt` log is used instead. 
-You can configure log level or even turn this logging off with the following configuration option:
+You can configure log level or even turn this logging off with the `stdout_log_level` configuration option.
 
 
-```ruby 
-system = Next.system('my_system') do |config|
-  # Sets start/termination time logging level to "info"
-  config.stdout_log_level = :info
-  # Turns off this type of logging
-  config.stdout_log_level = nil
-end
+Sets start/termination time logging level to "info"
+
+```yaml 
+next:
+  stdout_log_level: info
 ```
+
+Turns off this type of logging
+
+```yaml
+next:
+    stdout_log_level: null
+```
+
 Default log level for `$sdtout` logging is `warn`.
 
 #### Logging Options
